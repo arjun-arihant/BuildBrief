@@ -1,35 +1,86 @@
 # BuildBrief 🚀
 
-AI-Driven Software Specification Generator.
-Turn vague ideas into production-ready specs.
+**From Vague Idea to Production-Ready Spec.**
 
-## Prerequisites
-- Node.js (v18+)
-- Gemini API Key
+BuildBrief is an interactive AI-driven architect that helps you define your next software project. It acts as a Senior Technical Product Manager, guiding you through a structured interview process to generate a comprehensive "Mega-Prompt" specification that you can hand off to AI coding agents (like Cursor, Windsurf, or Bolt) to build the actual app.
 
-## Setup
+## ✨ Features
 
-1. **Server**
-   ```bash
-   cd server
-   npm install
-   cp .env.example .env
-   # Edit .env and add your GEMINI_API_KEY
-   npm run build # or just npx ts-node src/index.ts
-   ```
+-   **Interactive Architecture Interview**: A guided 10-step process to define your app's core requirements.
+-   **Educational First**: Explains technical concepts (databases, APIs, auth) in simple terms before asking you to make decisions.
+-   **Gemini-Powered**: Uses Google's Gemini Flash model for fast, intelligent context-aware reasoning.
+-   **Mega-Prompt Generation**: Outputs a detailed, multi-page technical specification covering User Stories, Schema, API, and Tech Stack.
+-   **Visual Progress**: Tracks your journey from idea to spec.
 
-2. **Client**
-   ```bash
-   cd client
-   npm install
-   npm run dev
-   ```
+## 🛠️ Tech Stack
 
-## Development
-- Server runs on `http://localhost:3000`
-- Client runs on `http://localhost:5173` (proxies /api to 3000)
+**Client**
+-   React 18 + Vite
+-   TypeScript
+-   Framer Motion (Animations)
+-   Lucide React (Icons)
+-   React Markdown
 
-## Tech Stack
-- React + Vite + TypeScript
-- Node.js + Express
-- Google Gemini API (flash-exp)
+**Server**
+-   Node.js + Express
+-   Google Gemini API (`gemini-2.0-flash-exp`)
+-   TypeScript
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+-   Node.js (v18 or higher)
+-   A [Google Gemini API Key](https://aistudio.google.com/)
+
+### Installation
+
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/yourusername/buildbrief.git
+    cd buildbrief
+    ```
+
+2.  **Setup Server**
+    ```bash
+    cd server
+    npm install
+    cp .env.example .env
+    ```
+    *Edit `.env` and paste your `GEMINI_API_KEY`.*
+
+3.  **Setup Client**
+    ```bash
+    cd ../client
+    npm install
+    ```
+
+### Running the App
+
+1.  **Start the Server** (Terminal 1)
+    ```bash
+    cd server
+    npm run dev
+    ```
+    *Server runs on `http://localhost:3000`*
+
+2.  **Start the Client** (Terminal 2)
+    ```bash
+    cd client
+    npm run dev
+    ```
+    *Client runs on `http://localhost:5173`*
+
+3.  Open `http://localhost:5173` in your browser.
+
+## 📖 Usage
+
+1.  Enter your app idea (e.g., "A Tinder for adopting rescue dogs").
+2.  Answer the architectural questions posed by the AI.
+3.  Review the educational definitions if you are unsure.
+4.  At the end (Step 10), receive your **Implementation Plan / Mega-Prompt**.
+5.  Copy the prompt and give it to your favorite AI coder!
+
+## 📄 License
+
+MIT
