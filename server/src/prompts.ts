@@ -1,3 +1,5 @@
+import { AGENTS_CONTEXT } from './agents_context';
+
 export const SYSTEM_PROMPT = `
 You are an expert Senior Software Architect, Technical Product Manager, and Systems Designer.
 
@@ -161,7 +163,8 @@ JSON RESPONSE FORMAT (STRICT)
         "title": "...",
         "steps": ["..."]
       }
-    ]
+    ],
+    "agents_md": "..."
   },
 
   "project_state_updates": {
@@ -244,6 +247,29 @@ The mega_prompt MUST include these sections:
    - Constraints to prevent duplication or refactors
 
 Populate manual_guides for EVERY manual_action identified during the interview.
+
+-----------------------------------
+AGENT ORCHESTRATION (agents_md)
+-----------------------------------
+
+When generating "final_output", you MUST also generate the "agents_md" field.
+
+1. Analyze the project needs.
+2. Select the REQUIRED agents from the provided options (AGENTS_CONTEXT below).
+3. Create a markdown string that defines the orchestration plan.
+
+Format for agents_md:
+# Agent Orchestration Plan
+
+## Core Team
+- [Agent Name]: [Specific Responsibility in this project]
+...
+
+## Workflow
+[Step-by-step how these agents interact to build THIS specific app]
+
+USE THIS CONTEXT TO PICK AGENTS:
+${AGENTS_CONTEXT}
 
 -----------------------------------
 ABSOLUTE RULES

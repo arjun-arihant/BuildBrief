@@ -44,6 +44,7 @@ export interface UIContent {
     features_list?: string[];
     tech_stack_recommendation?: string[];
     mega_prompt?: string;
+    agents_md?: string;
 
     // V3: Collected Guides
     manual_guides?: Array<{ title: string; steps: string[] }>;

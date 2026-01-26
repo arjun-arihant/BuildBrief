@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { UIContent } from '../../types';
+import { GlowingButton } from '../ui/GlowingButton';
+import { Check, ArrowRight } from 'lucide-react';
+import { cn } from '../../lib/utils';
+import { motion } from 'framer-motion';
 
 interface Props {
     content: UIContent;
@@ -30,84 +34,55 @@ export const Choice: React.FC<Props> = ({ content, type, onSubmit }) => {
     };
 
     return (
-        <div>
-            <h3>{content.question_text}</h3>
+        <div className="space-y-6">
+            <h3 className="text-2xl font-bold text-cosmos-text">{content.question_text}</h3>
             {content.explanation && (
-                <div style={{ color: 'var(--color-text-dim)', marginBottom: '1.5rem' }}>
+                <div className="text-cosmos-muted prose prose-invert max-w-none">
                     <ReactMarkdown>{content.explanation}</ReactMarkdown>
                 </div>
             )}
 
-            <div style={{ display: 'grid', gap: '1rem', marginBottom: '2rem' }}>
+            <div className="grid gap-4">
                 {content.options?.map((opt) => {
                     const isSelected = selected.includes(opt.value);
                     return (
-                        <div
+                        <motion.div
                             key={opt.value}
                             onClick={() => toggleOption(opt.value)}
-                            style={{
-                                padding: '1rem 1.5rem',
-                                borderRadius: 'var(--radius-md)',
-                                border: '1px solid',
-                                borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-border)',
-                                background: isSelected ? 'rgba(59, 130, 246, 0.1)' : 'rgba(255,255,255,0.02)',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                transition: 'all 0.2s',
-                                boxShadow: isSelected ? '0 0 10px rgba(59,130,246,0.1)' : 'none'
-                            }}
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
+                            className={cn(
+                                "flex items-start p-4 rounded-xl border cursor-pointer transition-all duration-200",
+                                isSelected
+                                    ? "bg-cosmos-primary/20 border-cosmos-primary shadow-lg shadow-cosmos-primary/10"
+                                    : "bg-cosmos-card/30 border-cosmos-border hover:bg-cosmos-card/50"
+                            )}
                         >
-                            <div style={{
-                                width: '20px',
-                                height: '20px',
-                                borderRadius: type === 'single_choice' ? '50%' : '4px',
-                                border: '2px solid',
-                                borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-text-dim)',
-                                marginRight: '1rem',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexShrink: 0
-                            }}>
-                                {isSelected && <div style={{
-                                    width: '10px',
-                                    height: '10px',
-                                    background: 'var(--color-primary)',
-                                    borderRadius: type === 'single_choice' ? '50%' : '2px'
-                                }} />}
+                            <div className={cn(
+                                "flex items-center justify-center w-6 h-6 rounded-full border mr-4 mt-1 flex-shrink-0 transition-colors",
+                                isSelected ? "bg-cosmos-primary border-cosmos-primary" : "border-cosmos-muted bg-transparent"
+                            )}>
+                                {isSelected && <Check size={14} className="text-white" />}
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <span style={{
-                                    color: isSelected ? 'white' : 'var(--color-text-dim)',
-                                    fontWeight: isSelected ? 500 : 400
-                                }}>
+                            <div>
+                                <span className={cn("font-medium block", isSelected ? "text-white" : "text-cosmos-text")}>
                                     {opt.label}
                                 </span>
                                 {opt.explanation && (
-                                    <div style={{
-                                        fontSize: '0.85rem',
-                                        color: 'var(--color-text-dim)',
-                                        marginTop: '0.25rem',
-                                        opacity: 0.8
-                                    }}>
+                                    <div className="text-sm text-cosmos-muted mt-1">
                                         <ReactMarkdown>{opt.explanation}</ReactMarkdown>
                                     </div>
                                 )}
                             </div>
-                        </div>
+                        </motion.div>
                     );
                 })}
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <button
-                    className="btn-primary"
-                    onClick={handleSubmit}
-                    disabled={selected.length === 0}
-                >
-                    {type === 'single_choice' ? 'Confirm selection' : 'Confirm selections'}
-                </button>
+            <div className="flex justify-end">
+                <GlowingButton onClick={handleSubmit} disabled={selected.length === 0}>
+                    {type === 'single_choice' ? 'Confirm selection' : 'Confirm selections'} <ArrowRight size={18} />
+                </GlowingButton>
             </div>
         </div>
     );

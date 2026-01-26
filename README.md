@@ -7,10 +7,11 @@ BuildBrief is an interactive AI-driven architect that helps you define your next
 ## ✨ Features
 
 -   **Interactive Architecture Interview**: A guided 10-step process to define your app's core requirements.
+-   **Cosmos UI**: A stunning, glassmorphic dark-mode interface designed for deep focus.
 -   **Educational First**: Explains technical concepts (databases, APIs, auth) in simple terms before asking you to make decisions.
--   **Gemini-Powered**: Uses Google's Gemini Flash model for fast, intelligent context-aware reasoning.
+-   **Gemini-Powered**: Uses Google's Gemini 3 Flash model for fast, intelligent context-aware reasoning.
 -   **Mega-Prompt Generation**: Outputs a detailed, multi-page technical specification covering User Stories, Schema, API, and Tech Stack.
--   **Visual Progress**: Tracks your journey from idea to spec.
+-   **Visual Progress**: Tracks your journey from idea to spec with animated constellations.
 
 ## 🛠️ Tech Stack
 
@@ -23,7 +24,7 @@ BuildBrief is an interactive AI-driven architect that helps you define your next
 
 **Server**
 -   Node.js + Express
--   Google Gemini API (`gemini-2.0-flash-exp`)
+-   Google Gemini API (`gemini-3-flash-preview`)
 -   TypeScript
 
 ## 🚀 Getting Started

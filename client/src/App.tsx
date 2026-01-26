@@ -1,18 +1,24 @@
 import { useState } from 'react';
+import { Shell } from './components/layout/Shell';
+import { GlassCard } from './components/ui/GlassCard';
+import { GlowingButton } from './components/ui/GlowingButton';
+import { Input } from './components/ui/Input';
 import { TemplateRenderer } from './components/TemplateRenderer';
-import { AIResponse } from './types';
-import { Star } from 'lucide-react'; // Import Star
-import './index.css';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, Brain, Rocket, Activity } from 'lucide-react';
+import type { AIResponse } from './types';
 
-const API_Base = '/api'; // Vite proxy handles the rest
+const API_Base = '/api';
 
 function App() {
+    // State
     const [projectId, setProjectId] = useState<string | null>(null);
     const [currentStep, setCurrentStep] = useState<AIResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [ideaInput, setIdeaInput] = useState('');
     const [error, setError] = useState<string | null>(null);
 
+    // API Methods
     const startProject = async () => {
         if (!ideaInput.trim()) return;
         setLoading(true);
@@ -48,11 +54,9 @@ function App() {
             });
             const data = await res.json();
             if (data.error) throw new Error(data.error);
-
             setCurrentStep(data.step);
         } catch (e: any) {
-            console.error(e);
-            setError(e.message || "Failed to submit answer");
+            setError(e.message || "Failed to submit");
         } finally {
             setLoading(false);
         }
@@ -80,84 +84,68 @@ function App() {
         }
     };
 
-    // Reload for "Build Another"
-    const resetApp = () => {
-        window.location.reload();
-    };
+    const resetApp = () => window.location.reload();
 
     return (
-        <div className="app-container" style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem' }}>
-            <header style={{ marginBottom: '3rem', textAlign: 'center' }}>
-                <h1 style={{ fontSize: '2.5rem', background: 'linear-gradient(to right, #60a5fa, #a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>
-                    BuildBrief
-                </h1>
-                <p style={{ color: 'var(--color-text-dim)', marginTop: '0.5rem' }}>
-                    From Vague Idea to Production Spec
-                </p>
-            </header>
-
-            <main className="glass-panel" style={{ padding: '2rem', borderRadius: 'var(--radius-lg)', minHeight: '400px', position: 'relative' }}>
-                {error && (
-                    <div style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#fee2e2', padding: '1rem', borderRadius: 'var(--radius-sm)', marginBottom: '1rem' }}>
-                        Error: {error}
-                    </div>
-                )}
-
+        <Shell>
+            <AnimatePresence mode="wait">
                 {!projectId ? (
-                    <div className="fade-in">
-                        <h2 style={{ marginBottom: '1.5rem' }}>What do you want to build?</h2>
-                        <textarea
-                            value={ideaInput}
-                            onChange={(e) => setIdeaInput(e.target.value)}
-                            placeholder="e.g. A Tinder for adopting rescue dogs..."
-                            rows={6}
-                            style={{ marginBottom: '1.5rem', width: '100%' }}
-                        />
-                        <button
-                            className="btn-primary"
-                            onClick={startProject}
-                            disabled={loading}
-                            style={{ width: '100%' }}
-                        >
-                            {loading ? 'Analyzing...' : 'Start Building Definition'}
-                        </button>
-                    </div>
+                    <motion.div
+                        key="landing"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="flex flex-col items-center text-center space-y-8 mt-10"
+                    >
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-primary/10 border border-cosmos-primary/20 text-cosmos-primary mb-2">
+                            <Sparkles size={16} />
+                            <span className="text-sm font-medium">AI-Powered Architecture</span>
+                        </div>
+                        <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4">
+                            From <span className="text-cosmos-secondary">Idea</span> to <span className="text-cosmos-primary">Spec</span>.
+                        </h1>
+                        <p className="text-xl text-cosmos-muted max-w-2xl mx-auto leading-relaxed mb-8">
+                            BuildBrief helps you define your next big thing. It acts as a Senior PM, interviewing you to generate a production-ready Mega-Prompt.
+                        </p>
+
+                        {/* Input Section */}
+                        <GlassCard className="w-full max-w-2xl p-2 flex gap-2 items-center">
+                            <Input
+                                value={ideaInput}
+                                onChange={(e) => setIdeaInput(e.target.value)}
+                                placeholder="e.g. A Tinder for adopting rescue dogs..."
+                                className="border-none text-lg h-14"
+                                containerClassName="flex-1 min-w-0" // Allow flex grow and prevent overflow
+                                onKeyDown={(e) => e.key === 'Enter' && startProject()}
+                            />
+                            <GlowingButton onClick={startProject} disabled={loading} className="h-14 px-8 whitespace-nowrap">
+                                {loading ? <Activity className="animate-spin" /> : <Rocket className="mr-2" size={20} />}
+                                {loading ? 'Building...' : 'Start'}
+                            </GlowingButton>
+                        </GlassCard>
+
+                        {error && <p className="text-red-400">{error}</p>}
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl mt-16">
+                            {[
+                                { icon: Brain, title: "Intelligent Inquiry", desc: "Adaptive questions that clarify your vision." },
+                                { icon: Rocket, title: "Mega-Prompt Output", desc: "Copy-paste specs for Cursor or Windsurf." },
+                                { icon: Sparkles, title: "Design Systems", desc: "Auto-suggested UI themes and stacks." }
+                            ].map((feature, i) => (
+                                <GlassCard key={i} hoverEffect className="text-left">
+                                    <feature.icon className="text-cosmos-primary mb-4" size={32} />
+                                    <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                                    <p className="text-cosmos-muted text-sm">{feature.desc}</p>
+                                </GlassCard>
+                            ))}
+                        </div>
+                    </motion.div>
                 ) : (
-                    <div className="fade-in">
-                        {/* Progress Bar */}
-                        {currentStep && currentStep.progress && (
-                            <div style={{ display: 'flex', gap: '8px', marginBottom: '2rem', justifyContent: 'center', alignItems: 'center' }}>
-                                {Array.from({ length: currentStep.progress.total }).map((_, i) => {
-                                    const isCurrent = i === (currentStep.progress!.current - 1);
-                                    const isPast = i < (currentStep.progress!.current - 1);
-                                    const isEducational = isCurrent && currentStep.is_educational;
-
-                                    if (isEducational) {
-                                        return (
-                                            <div key={i} style={{ color: '#fbbf24', transform: 'scale(1.2)' }}>
-                                                <Star size={16} fill="currentColor" />
-                                            </div>
-                                        );
-                                    }
-
-                                    return (
-                                        <div
-                                            key={i}
-                                            style={{
-                                                width: '8px',
-                                                height: '8px',
-                                                borderRadius: '50%',
-                                                background: (isCurrent || isPast)
-                                                    ? 'var(--color-primary)'
-                                                    : 'rgba(255,255,255,0.1)',
-                                                transition: 'all 0.3s ease'
-                                            }}
-                                        />
-                                    );
-                                })}
-                            </div>
-                        )}
-
+                    <motion.div
+                        key="wizard"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
                         {currentStep && (
                             <TemplateRenderer
                                 step={currentStep}
@@ -167,23 +155,10 @@ function App() {
                                 loading={loading}
                             />
                         )}
-                    </div>
+                    </motion.div>
                 )}
-
-                {loading && projectId && (
-                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(15, 23, 42, 0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius-lg)' }}>
-                        <div style={{ textAlign: 'center' }}>
-                            <div className="spinner" style={{ width: '40px', height: '40px', border: '3px solid rgba(59, 130, 246, 0.3)', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
-                            <p style={{ marginTop: '1rem', color: '#94a3b8' }}>Thinking...</p>
-                        </div>
-                    </div>
-                )}
-            </main>
-
-            <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-      `}</style>
-        </div>
+            </AnimatePresence>
+        </Shell>
     );
 }
 
