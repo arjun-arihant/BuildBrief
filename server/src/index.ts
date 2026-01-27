@@ -3,7 +3,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import { stateManager } from './state';
-import { getNextStep } from './gemini';
+import { getNextStep } from './openrouter';
 
 dotenv.config();
 

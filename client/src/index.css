@@ -2,6 +2,11 @@
 @config "../tailwind.config.js";
 
 @layer base {
+  html {
+    font-size: 150%;
+    /* Simulate 150% browser zoom level */
+  }
+
   body {
     @apply bg-cosmos-bg text-cosmos-text font-sans antialiased overflow-x-hidden;
     background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0B1120 100%);

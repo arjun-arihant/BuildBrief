@@ -46,6 +46,15 @@ export interface UIContent {
     mega_prompt?: string;
     agents_md?: string;
 
+    // V5: Enhanced Specification Fields
+    architecture_diagram?: string; // Mermaid diagram code
+    design_system?: {
+        colors: Record<string, string>;
+        typography: Record<string, string>;
+        spacing: string[];
+    };
+    ai_coder_rules?: string[]; // Explicit do's and don'ts for AI coders
+
     // V3: Collected Guides
     manual_guides?: Array<{ title: string; steps: string[] }>;
 }

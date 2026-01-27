@@ -11,11 +11,11 @@ interface GlassCardProps extends HTMLMotionProps<"div"> {
 export function GlassCard({ children, className, hoverEffect = false, ...props }: GlassCardProps) {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileHover={hoverEffect ? { scale: 1.02, y: -4 } : undefined}
             className={cn(
-                "glass rounded-xl p-6",
-                hoverEffect && "hover:bg-cosmos-card/80 transition-colors duration-300 cursor-pointer hover:shadow-cosmos-primary/20 hover:shadow-xl",
+                "bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6",
+                "shadow-lg shadow-black/10",
+                hoverEffect && "cursor-pointer transition-all duration-300 hover:border-cosmos-primary/30 hover:shadow-cosmos-primary/20",
                 className
             )}
             {...props}

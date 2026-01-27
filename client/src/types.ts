@@ -45,6 +45,15 @@ export interface UIContent {
     mega_prompt?: string;
     agents_md?: string;
 
+    // V5: Enhanced Specification Fields
+    architecture_diagram?: string;
+    design_system?: {
+        colors: Record<string, string>;
+        typography: Record<string, string>;
+        spacing: string[];
+    };
+    ai_coder_rules?: string[];
+
     // V3: Collected Guides
     manual_guides?: Array<{ title: string; steps: string[] }>;
 }
