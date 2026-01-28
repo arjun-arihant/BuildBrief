@@ -72,8 +72,8 @@ app.post('/api/answer', async (req, res) => {
         const updatedHistory = [...currentState.history, { question: "AI_QUESTION", answer: answer }];
         stateManager.updateSession(projectId, { history: updatedHistory });
 
-        // 2. Ask Gemini (NO QUEUE)
-        console.log("Asking Gemini...");
+        // 2. Ask AI (NO QUEUE)
+        console.log("[AI] Processing answer...");
         const stateWithHistory = stateManager.getSession(projectId)!; // Refresh state
         const nextStep = await getNextStep(stateWithHistory, answer);
 
@@ -85,10 +85,20 @@ app.post('/api/answer', async (req, res) => {
         // 4. Force correct progress calculation
         // History length includes the question we just answered.
         // So the NEXT question is length + 1.
+        // Calculate dynamic limit for progress display
+        const ideaLength = (stateWithHistory.idea_summary || '').length;
+        const hasMultipleRoles = (stateWithHistory.resolved_decisions?.user_roles || '').includes(',');
+        const hasIntegrations = (stateWithHistory.resolved_decisions?.integrations || []).length > 0;
+        let dynamicLimit = 5;
+        if (ideaLength > 100) dynamicLimit += 1;
+        if (hasMultipleRoles) dynamicLimit += 2;
+        if (hasIntegrations) dynamicLimit += 2;
+        dynamicLimit = Math.min(dynamicLimit, 10);
+
         const finalHistory = stateManager.getSession(projectId)?.history || [];
         nextStep.progress = {
             current: finalHistory.length + 1,
-            total: 10
+            total: dynamicLimit
         };
 
         res.json({ step: nextStep });
@@ -112,7 +122,7 @@ app.post('/api/refine', async (req, res) => {
             return res.status(404).json({ error: 'Session not found' });
         }
 
-        // Logic: Send the entire state + comments to Gemini to regenerate "final_output"
+        // Logic: Send the entire state + comments to AI to regenerate "final_output"
         // We reuse getNextStep but with a specific prefix
         const stateWithRefinement = {
             ...currentState,

@@ -29,7 +29,8 @@ interface Props {
     agentMd: string;
 }
 
-const agentIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+// Use type assertion to avoid LucideIcon props type mismatch
+const agentIcons: Record<string, typeof Users> = {
     'project-planner': Users,
     'frontend-specialist': Code,
     'backend-specialist': Code,

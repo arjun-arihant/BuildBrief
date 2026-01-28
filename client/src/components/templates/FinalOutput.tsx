@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { UIContent } from '../../types';
 import { GlowingButton } from '../ui/GlowingButton';
 import { GlassCard } from '../ui/GlassCard';
-import { AgentTimeline } from '../ui/AgentTimeline';
 import { motion } from 'framer-motion';
 import {
-    Copy, Check, RefreshCw, FileText, Code, BookOpen, Users,
-    Sparkles, Layers, Database, Palette, ArrowRight, Rocket,
-    CheckCircle2, Star
+    Copy, Check, RefreshCw, Code, BookOpen, ListChecks,
+    Sparkles, Layers, ArrowRight, Rocket, CheckCircle2, Star
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -48,8 +46,8 @@ export const FinalOutput: React.FC<Props> = ({ content, onRefine, onReset }) => 
     const tabs = [
         { id: 'spec', label: 'Overview', icon: Layers },
         { id: 'prompt', label: 'Mega-Prompt', icon: Code },
-        { id: 'agents', label: 'Build Team', icon: Users },
-        { id: 'guides', label: 'Guides', icon: BookOpen },
+        { id: 'agents', label: "What's Next", icon: ListChecks },
+        { id: 'guides', label: 'Setup Guides', icon: BookOpen },
     ] as const;
 
     // Stats for dashboard
@@ -137,9 +135,9 @@ export const FinalOutput: React.FC<Props> = ({ content, onRefine, onReset }) => 
                     <div className="text-xs text-cosmos-muted">Tech Stack</div>
                 </GlassCard>
                 <GlassCard className="text-center py-4 group hover:border-green-400/50 transition-colors cursor-pointer" onClick={() => setActiveTab('agents')}>
-                    <Users className="mx-auto mb-2 text-green-400 group-hover:scale-110 transition-transform" size={24} />
+                    <ListChecks className="mx-auto mb-2 text-green-400 group-hover:scale-110 transition-transform" size={24} />
                     <div className="text-2xl font-bold text-white">4</div>
-                    <div className="text-xs text-cosmos-muted">Build Phases</div>
+                    <div className="text-xs text-cosmos-muted">Next Steps</div>
                 </GlassCard>
                 <GlassCard className="text-center py-4 group hover:border-amber-400/50 transition-colors cursor-pointer" onClick={() => setActiveTab('guides')}>
                     <BookOpen className="mx-auto mb-2 text-amber-400 group-hover:scale-110 transition-transform" size={24} />
@@ -275,15 +273,84 @@ export const FinalOutput: React.FC<Props> = ({ content, onRefine, onReset }) => 
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
+                        className="space-y-4"
                     >
-                        {content.agents_md ? (
-                            <AgentTimeline agentMd={content.agents_md} />
-                        ) : (
-                            <div className="text-center text-cosmos-muted py-10">
-                                <Users size={48} className="mx-auto mb-4 opacity-50" />
-                                <p>No build team plan generated.</p>
+                        {/* What's Next Checklist */}
+                        <GlassCard className="bg-gradient-to-br from-green-500/10 to-emerald-500/5 border-green-500/30">
+                            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
+                                    <Rocket className="text-green-400" size={20} />
+                                </div>
+                                Ready to Build Your App!
+                            </h3>
+
+                            <div className="space-y-4">
+                                {[
+                                    {
+                                        step: 1,
+                                        title: "Copy the Mega-Prompt",
+                                        description: "Click the 'Copy Mega-Prompt' button above to copy your complete specification.",
+                                        done: copied
+                                    },
+                                    {
+                                        step: 2,
+                                        title: "Open Your AI Coding Tool",
+                                        description: "Launch Cursor, Windsurf, Bolt, or any AI coding assistant you prefer."
+                                    },
+                                    {
+                                        step: 3,
+                                        title: "Paste & Start Building",
+                                        description: "Create a new project and paste the mega-prompt. The AI will build your app step by step!"
+                                    },
+                                    {
+                                        step: 4,
+                                        title: "Review & Test",
+                                        description: "Check the generated code, run it locally, and iterate on any changes you want."
+                                    }
+                                ].map((item) => (
+                                    <motion.div
+                                        key={item.step}
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: item.step * 0.1 }}
+                                        className={cn(
+                                            "flex gap-4 p-4 rounded-xl border transition-all",
+                                            item.done
+                                                ? "bg-green-500/20 border-green-500/50"
+                                                : "bg-cosmos-card/30 border-cosmos-border hover:border-green-500/30"
+                                        )}
+                                    >
+                                        <div className={cn(
+                                            "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm",
+                                            item.done
+                                                ? "bg-green-500 text-white"
+                                                : "bg-cosmos-primary/20 text-cosmos-primary"
+                                        )}>
+                                            {item.done ? <Check size={16} /> : item.step}
+                                        </div>
+                                        <div>
+                                            <h4 className={cn(
+                                                "font-semibold mb-1",
+                                                item.done ? "text-green-300" : "text-white"
+                                            )}>
+                                                {item.title}
+                                            </h4>
+                                            <p className="text-sm text-cosmos-muted">
+                                                {item.description}
+                                            </p>
+                                        </div>
+                                    </motion.div>
+                                ))}
                             </div>
-                        )}
+
+                            {/* Pro Tip */}
+                            <div className="mt-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
+                                <p className="text-sm text-amber-200">
+                                    <strong className="text-amber-400">💡 Pro Tip:</strong> If the AI makes mistakes, just tell it what's wrong!
+                                    Say something like "The login button should be blue" or "Add a search feature to the homepage".
+                                </p>
+                            </div>
+                        </GlassCard>
                     </motion.div>
                 )}
 
@@ -291,33 +358,69 @@ export const FinalOutput: React.FC<Props> = ({ content, onRefine, onReset }) => 
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="space-y-4"
+                        className="space-y-6"
                     >
                         {content.manual_guides && content.manual_guides.length > 0 ? (
-                            content.manual_guides.map((guide, i) => (
-                                <GlassCard key={i}>
-                                    <h3 className="text-lg font-bold text-cosmos-primary mb-3 flex items-center gap-2">
-                                        <FileText size={18} />
-                                        {guide.title}
-                                    </h3>
-                                    <ol className="space-y-2">
-                                        {guide.steps.map((step, j) => (
-                                            <li key={j} className="flex items-start gap-3 text-cosmos-muted">
-                                                <span className="w-6 h-6 rounded-full bg-cosmos-primary/20 text-cosmos-primary text-sm flex items-center justify-center flex-shrink-0">
-                                                    {j + 1}
-                                                </span>
-                                                {step}
-                                            </li>
-                                        ))}
-                                    </ol>
-                                </GlassCard>
-                            ))
+                            <>
+                                {/* Header */}
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                                        <BookOpen className="text-amber-400" size={20} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-white">Setup Guides</h3>
+                                        <p className="text-sm text-cosmos-muted">Complete these before running your app</p>
+                                    </div>
+                                </div>
+
+                                {content.manual_guides.map((guide, i) => (
+                                    <GlassCard
+                                        key={i}
+                                        className="bg-gradient-to-br from-amber-500/10 to-orange-500/5 border-amber-500/30"
+                                    >
+                                        <h3 className="text-xl font-bold text-amber-300 mb-4 flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-amber-500/30 flex items-center justify-center text-sm font-bold text-amber-200">
+                                                {i + 1}
+                                            </div>
+                                            {guide.title}
+                                        </h3>
+                                        <div className="space-y-3 pl-2">
+                                            {guide.steps.map((step, j) => (
+                                                <motion.div
+                                                    key={j}
+                                                    initial={{ opacity: 0, x: -10 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    transition={{ delay: j * 0.05 }}
+                                                    className="flex items-start gap-3 p-3 rounded-lg bg-cosmos-card/30 border border-cosmos-border hover:border-amber-500/30 transition-colors group"
+                                                >
+                                                    <span className="w-7 h-7 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">
+                                                        {j + 1}
+                                                    </span>
+                                                    <span className="text-white/90 flex-1">{step}</span>
+                                                    <button
+                                                        onClick={() => navigator.clipboard.writeText(step)}
+                                                        className="opacity-0 group-hover:opacity-100 text-cosmos-muted hover:text-amber-400 transition-all p-1"
+                                                        title="Copy step"
+                                                    >
+                                                        <Copy size={14} />
+                                                    </button>
+                                                </motion.div>
+                                            ))}
+                                        </div>
+                                    </GlassCard>
+                                ))}
+                            </>
                         ) : (
-                            <div className="text-center text-cosmos-muted py-10">
-                                <CheckCircle2 size={48} className="mx-auto mb-4 text-green-400" />
-                                <p className="font-medium text-white mb-1">No Manual Setup Required</p>
-                                <p className="text-sm">This project can be built entirely with the mega-prompt!</p>
-                            </div>
+                            <GlassCard className="bg-gradient-to-br from-green-500/10 to-emerald-500/5 border-green-500/30">
+                                <div className="text-center py-8">
+                                    <CheckCircle2 size={56} className="mx-auto mb-4 text-green-400" />
+                                    <h3 className="text-xl font-bold text-white mb-2">No Manual Setup Required! 🎉</h3>
+                                    <p className="text-cosmos-muted max-w-md mx-auto">
+                                        Great news! This project can be built entirely with the mega-prompt.
+                                        Just copy it and paste into your AI coding tool.
+                                    </p>
+                                </div>
+                            </GlassCard>
                         )}
                     </motion.div>
                 )}
