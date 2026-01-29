@@ -5,7 +5,6 @@ import { Choice } from './templates/Choice';
 import { ManualAction } from './templates/ManualAction';
 import { Explanation } from './templates/Explanation';
 import { FinalOutput } from './templates/FinalOutput';
-import { IdeaAnalysis } from './templates/IdeaAnalysis';
 import { GlassCard } from './ui/GlassCard';
 import { AutoDecisionsSidebar } from './ui/AutoDecisionsSidebar';
 
@@ -21,19 +20,6 @@ export const TemplateRenderer: React.FC<Props> = ({ step, onSubmit, onRefine, on
     const { template, content } = step;
     const { auto_decisions } = content;
 
-    // IdeaAnalysis template has its own layout (no GlassCard wrapper)
-    if (template === 'idea_analysis') {
-        return (
-            <>
-                <AutoDecisionsSidebar decisions={auto_decisions || []} />
-                <IdeaAnalysis
-                    content={content}
-                    onContinue={() => onSubmit('continue')}
-                />
-            </>
-        );
-    }
-
     return (
         <>
             {/* Auto-Decisions Sidebar (right side) */}
@@ -42,7 +28,7 @@ export const TemplateRenderer: React.FC<Props> = ({ step, onSubmit, onRefine, on
             <div className="w-full max-w-3xl mx-auto pb-20">
                 <GlassCard className="p-8 md:p-10 relative overflow-hidden">
                     {/* Background Glow */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-aurora-primary/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2" />
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-cosmos-primary/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2" />
 
                     {(() => {
                         switch (template) {
@@ -67,3 +53,4 @@ export const TemplateRenderer: React.FC<Props> = ({ step, onSubmit, onRefine, on
         </>
     );
 };
+

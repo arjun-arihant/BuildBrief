@@ -60,46 +60,41 @@ export const Choice: React.FC<Props> = ({ content, type, onSubmit }) => {
 
     return (
         <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-aurora-text">{content.question_text}</h3>
+            <h3 className="text-2xl font-bold text-cosmos-text">{content.question_text}</h3>
             {content.explanation && (
-                <div className="text-aurora-muted prose prose-invert max-w-none">
+                <div className="text-cosmos-muted prose prose-invert max-w-none">
                     <ReactMarkdown>{content.explanation}</ReactMarkdown>
                 </div>
             )}
 
-            <div className="grid gap-3">
-                {content.options?.map((opt, index) => {
+            <div className="grid gap-4">
+                {content.options?.map((opt) => {
                     const isSelected = selected.includes(opt.value);
                     return (
                         <motion.div
                             key={opt.value}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.05 }}
                             onClick={() => toggleOption(opt.value)}
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
                             className={cn(
                                 "flex items-start p-4 rounded-xl border cursor-pointer transition-all duration-200",
                                 isSelected
-                                    ? "bg-aurora-primary/20 border-aurora-primary shadow-lg shadow-aurora-primary/10"
-                                    : "bg-aurora-surface/50 border-aurora-border hover:bg-aurora-surfaceHover/50 hover:border-aurora-primary/30"
+                                    ? "bg-cosmos-primary/20 border-cosmos-primary shadow-lg shadow-cosmos-primary/10"
+                                    : "bg-cosmos-card/30 border-cosmos-border hover:bg-cosmos-card/50"
                             )}
                         >
                             <div className={cn(
-                                "flex items-center justify-center w-6 h-6 rounded-full border mr-4 mt-0.5 flex-shrink-0 transition-all duration-200",
-                                isSelected
-                                    ? "bg-aurora-primary border-aurora-primary scale-110"
-                                    : "border-aurora-muted/50 bg-transparent"
+                                "flex items-center justify-center w-6 h-6 rounded-full border mr-4 mt-1 flex-shrink-0 transition-colors",
+                                isSelected ? "bg-cosmos-primary border-cosmos-primary" : "border-cosmos-muted bg-transparent"
                             )}>
                                 {isSelected && <Check size={14} className="text-white" />}
                             </div>
-                            <div className="flex-1">
-                                <span className={cn("font-medium block", isSelected ? "text-aurora-text" : "text-aurora-text")}>
+                            <div>
+                                <span className={cn("font-medium block", isSelected ? "text-white" : "text-cosmos-text")}>
                                     {opt.label}
                                 </span>
                                 {opt.explanation && (
-                                    <div className="text-sm text-aurora-muted mt-1 leading-relaxed">
+                                    <div className="text-sm text-cosmos-muted mt-1">
                                         <ReactMarkdown>{opt.explanation}</ReactMarkdown>
                                     </div>
                                 )}
@@ -110,28 +105,23 @@ export const Choice: React.FC<Props> = ({ content, type, onSubmit }) => {
 
                 {/* Custom Answer Option */}
                 <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: (content.options?.length || 0) * 0.05 }}
                     onClick={() => setShowCustomInput(true)}
                     whileHover={{ scale: 1.01 }}
                     className={cn(
                         "flex items-start p-4 rounded-xl border cursor-pointer transition-all duration-200",
                         showCustomInput || customAnswer
-                            ? "bg-aurora-secondary/20 border-aurora-secondary shadow-lg shadow-aurora-secondary/10"
-                            : "bg-aurora-surface/30 border-dashed border-aurora-border/50 hover:bg-aurora-surface/50"
+                            ? "bg-cosmos-secondary/20 border-cosmos-secondary shadow-lg shadow-cosmos-secondary/10"
+                            : "bg-cosmos-card/30 border-dashed border-cosmos-border hover:bg-cosmos-card/50"
                     )}
                 >
                     <div className={cn(
-                        "flex items-center justify-center w-6 h-6 rounded-full border mr-4 mt-0.5 flex-shrink-0 transition-all duration-200",
-                        customAnswer
-                            ? "bg-aurora-secondary border-aurora-secondary"
-                            : "border-aurora-muted/50 bg-transparent"
+                        "flex items-center justify-center w-6 h-6 rounded-full border mr-4 mt-1 flex-shrink-0 transition-colors",
+                        customAnswer ? "bg-cosmos-secondary border-cosmos-secondary" : "border-cosmos-muted bg-transparent"
                     )}>
-                        <Pencil size={12} className={customAnswer ? "text-white" : "text-aurora-muted"} />
+                        <Pencil size={12} className={customAnswer ? "text-white" : "text-cosmos-muted"} />
                     </div>
                     <div className="flex-1">
-                        <span className={cn("font-medium block mb-2", customAnswer ? "text-aurora-text" : "text-aurora-muted")}>
+                        <span className={cn("font-medium block mb-2", customAnswer ? "text-white" : "text-cosmos-muted")}>
                             Or type your own answer...
                         </span>
                         {showCustomInput && (
@@ -148,16 +138,12 @@ export const Choice: React.FC<Props> = ({ content, type, onSubmit }) => {
                 </motion.div>
             </div>
 
-            <div className="flex justify-end pt-2">
-                <GlowingButton
-                    onClick={handleSubmit}
-                    disabled={!canSubmit}
-                    icon={<ArrowRight size={18} />}
-                    iconPosition="right"
-                >
-                    {type === 'single_choice' ? 'Confirm selection' : 'Confirm selections'}
+            <div className="flex justify-end">
+                <GlowingButton onClick={handleSubmit} disabled={!canSubmit}>
+                    {type === 'single_choice' ? 'Confirm selection' : 'Confirm selections'} <ArrowRight size={18} />
                 </GlowingButton>
             </div>
         </div>
     );
 };
+

@@ -18,12 +18,31 @@ export type UITemplate =
     | 'explanation_only'
     | 'manual_action'
     | 'summary'
-    | 'final_output';
+    | 'final_output'
+    | 'idea_analysis';
 
 export interface ChoiceOption {
     value: string;
     label: string;
     explanation?: string;
+}
+
+// IdeaAnalysis content structure
+export interface IdeaAnalysisContent {
+    idea_summary: string;
+    app_name_suggestion: string;
+    vision_statement: string;
+    implementation_approaches: Array<{
+        title: string;
+        description: string;
+        icon?: string;
+    }>;
+    caution: {
+        type: 'market' | 'technical' | 'scope' | 'competition';
+        message: string;
+    };
+    journey_preview: string[];
+    auto_decisions?: Array<{ decision: string; reason: string }>;
 }
 
 export interface UIContent {
@@ -56,10 +75,25 @@ export interface UIContent {
 
     // V3: Collected Guides
     manual_guides?: Array<{ title: string; steps: string[] }>;
+
+    // V6: IdeaAnalysis fields
+    idea_summary?: string;
+    app_name_suggestion?: string;
+    vision_statement?: string;
+    implementation_approaches?: Array<{
+        title: string;
+        description: string;
+        icon?: string;
+    }>;
+    caution?: {
+        type: 'market' | 'technical' | 'scope' | 'competition';
+        message: string;
+    };
+    journey_preview?: string[];
 }
 
 export interface AIResponse {
-    type: 'question' | 'final_output' | 'error';
+    type: 'question' | 'final_output' | 'error' | 'idea_analysis';
     template: UITemplate;
     content: UIContent;
     project_state_updates?: any;
