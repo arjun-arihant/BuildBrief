@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://buildbrief.com/sitemap.xml
+
+# Disallow admin and private routes
+Disallow: /app/
+Disallow: /admin/
+Disallow: /api/
+
+# Crawl delay for bots
+Crawl-delay: 10
