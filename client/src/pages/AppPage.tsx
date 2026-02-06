@@ -88,6 +88,18 @@ export function AppPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const downloadPrompt = (text: string) => {
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'buildbrief-mega-prompt.txt';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
   const resetApp = () => {
     setState({ projectId: null, currentStep: null, history: [] });
     setIdeaInput('');
@@ -110,10 +122,13 @@ export function AppPage() {
         );
       
       case 'final_output':
+        const megaPrompt = currentStep.content.mega_prompt || currentStep.content.megaPrompt || '';
         return (
           <FinalStep 
             step={currentStep.content} 
-            onCopy={() => copyToClipboard(currentStep.content.mega_prompt || '')}
+            megaPrompt={megaPrompt}
+            onCopy={() => copyToClipboard(megaPrompt)}
+            onDownload={() => downloadPrompt(megaPrompt)}
             copied={copied}
             onReset={resetApp}
           />
@@ -218,6 +233,17 @@ export function AppPage() {
                   {error && (
                     <p className="text-aurora-error mt-4">{error}</p>
                   )}
+
+                  <div className="flex flex-wrap items-center justify-center gap-3 mt-4 text-sm text-aurora-muted">
+                    <span>Need inspiration?</span>
+                    <button
+                      type="button"
+                      onClick={() => setIdeaInput('A concierge booking app for boutique fitness classes.')}
+                      className="text-aurora-primary hover:text-aurora-text transition-colors"
+                    >
+                      Try a sample idea
+                    </button>
+                  </div>
                 </div>
 
                 <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl">
@@ -229,6 +255,20 @@ export function AppPage() {
                     <div key={item.label} className="text-center">
                       <div className="text-aurora-text font-medium">{item.label}</div>
                       <div className="text-sm text-aurora-muted">{item.desc}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-10 grid gap-3 text-left max-w-2xl">
+                  {[
+                    { title: 'Step 1', desc: 'Share your idea and goal.' },
+                    { title: 'Step 2', desc: 'Answer focused architecture questions.' },
+                    { title: 'Step 3', desc: 'Get a copy-ready Mega-Prompt.' }
+                  ].map((item) => (
+                    <div key={item.title} className="flex items-center gap-4 text-aurora-muted">
+                      <div className="w-14 text-aurora-text font-medium">{item.title}</div>
+                      <div className="flex-1 h-px bg-aurora-border/40" />
+                      <div className="text-sm">{item.desc}</div>
                     </div>
                   ))}
                 </div>
@@ -348,9 +388,11 @@ function QuestionStep({ step, onSubmit, loading }: {
   );
 }
 
-function FinalStep({ step, onCopy, copied, onReset }: { 
+function FinalStep({ step, megaPrompt, onCopy, onDownload, copied, onReset }: { 
   step: any; 
+  megaPrompt: string;
   onCopy: () => void;
+  onDownload: () => void;
   copied: boolean;
   onReset: () => void;
 }) {
@@ -386,6 +428,7 @@ function FinalStep({ step, onCopy, copied, onReset }: {
             </button>
             
             <button
+              onClick={onDownload}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-aurora-surface text-sm hover:bg-aurora-surfaceHover transition-colors"
             >
               <Download size={16} />
@@ -395,7 +438,7 @@ function FinalStep({ step, onCopy, copied, onReset }: {
         </div>
 
         <pre className="bg-aurora-bg/50 rounded-lg p-4 overflow-auto max-h-96 text-sm text-aurora-text whitespace-pre-wrap">
-          {step.megaPrompt || 'Your Mega-Prompt will appear here...'}
+          {megaPrompt || 'Your Mega-Prompt will appear here...'}
         </pre>
       </GlassCard>
 
