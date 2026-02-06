@@ -56,11 +56,13 @@ const additionalFeatures = [
     icon: Users,
     title: 'Team Collaboration',
     description: 'Invite team members to review and contribute to specifications in real-time.',
+    status: 'Coming soon'
   },
   {
     icon: Layers,
     title: 'Version Control',
     description: 'Track changes and maintain history of your project specifications over time.',
+    status: 'Coming soon'
   },
   {
     icon: Shield,
@@ -76,11 +78,13 @@ const additionalFeatures = [
     icon: Globe,
     title: 'Multi-Language',
     description: 'Generate specifications in multiple programming languages and frameworks.',
+    status: 'Coming soon'
   },
   {
     icon: Workflow,
     title: 'Export Options',
     description: 'Export as Markdown, PDF, or structured JSON for various use cases.',
+    status: 'In beta'
   },
 ];
 
@@ -229,7 +233,14 @@ export function FeaturesPage() {
                 transition={{ delay: i * 0.1 }}
               >
                 <GlassCard hover className="h-full">
-                  <feature.icon className="w-10 h-10 text-aurora-primary mb-4" />
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <feature.icon className="w-10 h-10 text-aurora-primary" />
+                    {feature.status && (
+                      <span className="text-[10px] uppercase tracking-wide px-2 py-1 rounded-full bg-aurora-surface text-aurora-muted">
+                        {feature.status}
+                      </span>
+                    )}
+                  </div>
                   <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                   <p className="text-aurora-muted">{feature.description}</p>
                 </GlassCard>

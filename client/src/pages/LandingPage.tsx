@@ -219,11 +219,16 @@ export function LandingPage() {
               />
               {/* Placeholder if no image */}
               <div className="aspect-video bg-aurora-surface/50 flex items-center justify-center">
-                <div className="text-center">
+                <div className="max-w-md text-center px-6">
                   <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-aurora-primary to-aurora-secondary mx-auto mb-4 flex items-center justify-center">
                     <Play size={32} className="text-white ml-1" />
                   </div>
-                  <p className="text-aurora-muted">See BuildBrief in action</p>
+                  <p className="text-aurora-muted mb-4">See BuildBrief in action</p>
+                  <div className="grid gap-2 text-sm text-aurora-muted">
+                    <span>1. Share your idea</span>
+                    <span>2. Answer focused questions</span>
+                    <span>3. Get a copy-ready Mega-Prompt</span>
+                  </div>
                 </div>
               </div>
             </div>
