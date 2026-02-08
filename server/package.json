@@ -8,10 +8,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node --esm src/index.ts",
+    "dev": "tsx src/index.ts",
     "lint": "tsc --noEmit"
   },
-  "keywords": ["ai", "api", "buildbrief"],
+  "keywords": [
+    "ai",
+    "api",
+    "buildbrief"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -19,13 +23,14 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "openai": "^4.28.0",
-    "zod": "^3.22.4"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.10.4",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.3.3"
   },
   "engines": {

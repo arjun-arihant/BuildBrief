@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {
   Sparkles, Activity, ArrowRight, RotateCcw,
   CheckCircle2, Download, Copy, Check, ChevronRight
 } from 'lucide-react';
 import { GlassCard } from '../components/ui/GlassCard';
+import { TemplateRenderer } from '../components/TemplateRenderer';
 import { GlowingButton } from '../components/ui/GlowingButton';
 import { Input } from '../components/ui/Input';
 import type { AIResponse } from '../types';
@@ -34,7 +35,7 @@ export function AppPage() {
     if (!ideaInput.trim()) return;
     setLoading(true);
     setError(null);
-    
+
     try {
       const res = await fetch(`${API_Base}/init`, {
         method: 'POST',
@@ -42,12 +43,12 @@ export function AppPage() {
         body: JSON.stringify({ idea: ideaInput })
       });
       const data = await res.json();
-      if (data.error) throw new Error(data.error);
+      if (data.error || !data.success) throw new Error(data.error || 'Failed to initialize project');
 
       setState({
-        projectId: data.projectId,
-        currentStep: data.step,
-        history: [data.step]
+        projectId: data.data.projectId,
+        currentStep: data.data.step,
+        history: [data.data.step]
       });
     } catch (e: any) {
       setError(e.message || "Failed to start");
@@ -60,7 +61,7 @@ export function AppPage() {
     if (!state.projectId) return;
     setLoading(true);
     setError(null);
-    
+
     try {
       const res = await fetch(`${API_Base}/answer`, {
         method: 'POST',
@@ -68,12 +69,12 @@ export function AppPage() {
         body: JSON.stringify({ projectId: state.projectId, answer })
       });
       const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      
+      if (data.error || !data.success) throw new Error(data.error || 'Failed to submit answer');
+
       setState(prev => ({
         ...prev,
-        currentStep: data.step,
-        history: [...prev.history, data.step]
+        currentStep: data.data.step,
+        history: [...prev.history, data.data.step]
       }));
     } catch (e: any) {
       setError(e.message || "Failed to submit");
@@ -109,34 +110,36 @@ export function AppPage() {
   const renderStepContent = () => {
     if (!state.currentStep) return null;
 
-    const currentStep = state.currentStep;
-
-    switch (currentStep.type) {
-      case 'question':
-        return (
-          <QuestionStep 
-            step={currentStep.content} 
-            onSubmit={submitAnswer} 
-            loading={loading} 
-          />
-        );
-      
-      case 'final_output':
-        const megaPrompt = currentStep.content.mega_prompt || currentStep.content.megaPrompt || '';
-        return (
-          <FinalStep 
-            step={currentStep.content} 
-            megaPrompt={megaPrompt}
-            onCopy={() => copyToClipboard(megaPrompt)}
-            onDownload={() => downloadPrompt(megaPrompt)}
-            copied={copied}
-            onReset={resetApp}
-          />
-        );
-      
-      default:
-        return null;
-    }
+    return (
+      <TemplateRenderer
+        step={state.currentStep}
+        onSubmit={submitAnswer}
+        onRefine={async (comments: string) => {
+          if (!state.projectId) return;
+          setLoading(true);
+          try {
+            const res = await fetch(`${API_Base}/refine`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ projectId: state.projectId, comments })
+            });
+            const data = await res.json();
+            if (data.error || !data.success) throw new Error(data.error || 'Failed to refine');
+            setState(prev => ({
+              ...prev,
+              currentStep: data.data.step,
+              history: [...prev.history, data.data.step]
+            }));
+          } catch (e: any) {
+            setError(e.message || "Failed to refine");
+          } finally {
+            setLoading(false);
+          }
+        }}
+        onReset={resetApp}
+        loading={loading}
+      />
+    );
   };
 
   return (
@@ -158,7 +161,7 @@ export function AppPage() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-aurora-bg/80 backdrop-blur-xl border-b border-aurora-border/30">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <button 
+          <button
             onClick={() => navigate('/')}
             className="flex items-center gap-2"
           >
@@ -204,24 +207,26 @@ export function AppPage() {
                 </h1>
 
                 <p className="text-xl text-aurora-muted max-w-xl mb-10">
-                  Describe your project and let our AI interview you to create a 
+                  Describe your project and let our AI interview you to create a
                   production-ready specification.
                 </p>
 
                 <div className="w-full max-w-2xl">
-                  <GlassCard glow className="p-2">
-                    <div className="flex gap-2">
-                      <Input
-                        value={ideaInput}
-                        onChange={(e) => setIdeaInput(e.target.value)}
-                        placeholder="e.g., A Tinder for adopting rescue dogs..."
-                        className="border-none text-lg h-14 bg-transparent flex-1"
-                        onKeyDown={(e) => e.key === 'Enter' && startProject()}
-                      />
+                  <GlassCard glow className="p-3">
+                    <div className="flex gap-3 items-center">
+                      <div className="flex-1 min-w-0">
+                        <Input
+                          value={ideaInput}
+                          onChange={(e) => setIdeaInput(e.target.value)}
+                          placeholder="e.g., A Tinder for adopting rescue dogs..."
+                          className="border-none text-lg h-14 bg-transparent w-full"
+                          onKeyDown={(e) => e.key === 'Enter' && startProject()}
+                        />
+                      </div>
                       <GlowingButton
                         onClick={startProject}
                         disabled={loading || !ideaInput.trim()}
-                        className="h-14 px-6"
+                        className="h-14 px-6 flex-shrink-0"
                         icon={loading ? <Activity className="animate-spin" size={20} /> : <ArrowRight size={20} />}
                         iconPosition="right"
                       >
@@ -317,8 +322,8 @@ export function AppPage() {
 
 // Sub-components
 
-function QuestionStep({ step, onSubmit, loading }: { 
-  step: any; 
+function QuestionStep({ step, onSubmit, loading }: {
+  step: any;
   onSubmit: (answer: string) => void;
   loading: boolean;
 }) {
@@ -335,7 +340,7 @@ function QuestionStep({ step, onSubmit, loading }: {
           <div className="w-10 h-10 rounded-full bg-aurora-primary/20 flex items-center justify-center flex-shrink-0">
             <Sparkles size={20} className="text-aurora-primary" />
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-2">{step.question}</h3>
             {step.context && (
@@ -370,7 +375,7 @@ function QuestionStep({ step, onSubmit, loading }: {
             rows={4}
             className="w-full bg-transparent border-none resize-none focus:outline-none text-aurora-text placeholder:text-aurora-muted"
           />
-          
+
           <div className="flex justify-end mt-4">
             <GlowingButton
               onClick={() => onSubmit(answer)}
@@ -388,8 +393,8 @@ function QuestionStep({ step, onSubmit, loading }: {
   );
 }
 
-function FinalStep({ step, megaPrompt, onCopy, onDownload, copied, onReset }: { 
-  step: any; 
+function FinalStep({ step, megaPrompt, onCopy, onDownload, copied, onReset }: {
+  step: any;
   megaPrompt: string;
   onCopy: () => void;
   onDownload: () => void;
@@ -409,7 +414,7 @@ function FinalStep({ step, megaPrompt, onCopy, onDownload, copied, onReset }: {
       <h2 className="text-3xl font-display font-bold mb-2">
         Your spec is ready!
       </h2>
-      
+
       <p className="text-aurora-muted mb-8">
         Copy your Mega-Prompt and use it with Cursor, Windsurf, or any AI coding agent.
       </p>
@@ -417,7 +422,7 @@ function FinalStep({ step, megaPrompt, onCopy, onDownload, copied, onReset }: {
       <GlassCard className="mb-6 text-left">
         <div className="flex items-center justify-between mb-4">
           <span className="text-sm font-medium text-aurora-muted">Mega-Prompt</span>
-          
+
           <div className="flex gap-2">
             <button
               onClick={onCopy}
@@ -426,7 +431,7 @@ function FinalStep({ step, megaPrompt, onCopy, onDownload, copied, onReset }: {
               {copied ? <Check size={16} /> : <Copy size={16} />}
               {copied ? 'Copied!' : 'Copy'}
             </button>
-            
+
             <button
               onClick={onDownload}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-aurora-surface text-sm hover:bg-aurora-surfaceHover transition-colors"
