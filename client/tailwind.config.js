@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+    darkMode: 'class',
     content: [
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,22 +8,22 @@ export default {
     theme: {
         extend: {
             colors: {
-                // Aurora Theme - Creative, warm, inviting
+                // Aurora Theme - Uses CSS variables for theme switching
                 aurora: {
-                    bg: "#0F0F12",           // Deep charcoal
-                    surface: "#18181B",       // Card backgrounds
-                    surfaceHover: "#27272A",  // Hover states
-                    primary: "#8B5CF6",       // Violet (actions)
-                    primaryHover: "#7C3AED",  // Violet darker
-                    secondary: "#F59E0B",     // Amber (highlights)
-                    accent: "#06B6D4",        // Cyan (info)
-                    success: "#10B981",       // Emerald
-                    warning: "#F97316",       // Orange
-                    error: "#EF4444",         // Red
-                    text: "#FAFAFA",          // Primary text
-                    muted: "#A1A1AA",         // Secondary text
-                    border: "#27272A",        // Subtle borders
-                    glow: "rgba(139, 92, 246, 0.15)", // Primary glow
+                    bg: "var(--color-bg)",
+                    surface: "var(--color-surface)",
+                    surfaceHover: "var(--color-surface-hover)",
+                    primary: "var(--color-primary)",
+                    primaryHover: "var(--color-primary-hover)",
+                    secondary: "var(--color-secondary)",
+                    accent: "var(--color-accent)",
+                    success: "var(--color-success)",
+                    warning: "var(--color-warning)",
+                    error: "var(--color-error)",
+                    text: "var(--color-text)",
+                    muted: "var(--color-text-muted)",
+                    border: "var(--color-border)",
+                    glow: "var(--color-primary-glow)",
                 },
                 // Keep cosmos for backward compat during transition
                 cosmos: {
