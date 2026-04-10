@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  Sparkles, ArrowRight, Zap, Shield, Users, Workflow,
-  Star, CheckCircle2, Play
+import {
+  Sparkles, ArrowRight, Zap, Shield, Download, Code,
+  CheckCircle2, Play
 } from 'lucide-react';
 import { GlassCard } from '../components/ui/GlassCard';
 import { GlowingButton } from '../components/ui/GlowingButton';
-import { Input } from '../components/ui/Input';
 import { SEO } from '../components/seo/SEO';
 import { cn } from '../lib/utils';
 
@@ -19,7 +17,7 @@ const features = [
     color: 'from-violet-500 to-purple-600',
   },
   {
-    icon: Workflow,
+    icon: Code,
     title: 'Smart Decision Making',
     description: 'Automatically decides technical details so you can focus on what matters most.',
     color: 'from-amber-500 to-orange-600',
@@ -31,9 +29,9 @@ const features = [
     color: 'from-cyan-500 to-blue-600',
   },
   {
-    icon: Users,
-    title: 'Team Collaboration',
-    description: 'Share specifications with your team and collaborate in real-time.',
+    icon: Download,
+    title: 'Target-Specific Exports',
+    description: 'Export as .cursorrules, .windsurfrules, or plain text — formatted for your preferred AI coder.',
     color: 'from-emerald-500 to-teal-600',
   },
 ];
@@ -61,52 +59,26 @@ const steps = [
   },
 ];
 
-const testimonials = [
+const useCases = [
   {
-    quote: "BuildBrief turned my vague app idea into a detailed spec in 20 minutes. What would have taken weeks of back-and-forth with developers.",
-    author: "Sarah Chen",
-    role: "Founder, TechStart",
-    avatar: "SC",
-    rating: 5,
+    title: "A Tinder for rescue dogs",
+    description: "Swipe-based adoption matching app. The AI interview figured out the matching algorithm, real-time chat, and shelter integration.",
   },
   {
-    quote: "The AI asked questions I hadn't even considered. Saved us from making costly architectural mistakes early on.",
-    author: "Marcus Johnson",
-    role: "CTO, DataFlow Inc",
-    avatar: "MJ",
-    rating: 5,
+    title: "Meal prep subscription box",
+    description: "Weekly meal planning with ingredient delivery. Auto-decided Stripe payments, inventory management, and recipe CMS.",
   },
   {
-    quote: "As a non-technical founder, BuildBrief gave me the confidence to communicate my vision clearly to developers.",
-    author: "Emma Williams",
-    role: "CEO, GreenLeaf",
-    avatar: "EW",
-    rating: 5,
+    title: "Neighborhood tool lending",
+    description: "Community tool-sharing platform. Identified needs for trust scoring, pickup scheduling, and damage tracking.",
   },
-];
-
-const stats = [
-  { value: '10K+', label: 'Specs Generated' },
-  { value: '98%', label: 'Satisfaction Rate' },
-  { value: '50+', label: 'Countries' },
-  { value: '24/7', label: 'AI Available' },
 ];
 
 export function LandingPage() {
-  const [email, setEmail] = useState('');
-  const navigate = useNavigate();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      navigate('/app', { state: { email } });
-    }
-  };
-
   return (
     <>
       <SEO />
-      
+
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center px-4 pt-20 pb-32">
         <div className="max-w-6xl mx-auto text-center">
@@ -120,7 +92,7 @@ export function LandingPage() {
           >
             <Sparkles size={16} className="text-aurora-primary" />
             <span className="text-sm font-medium text-aurora-primary">
-              Now with enhanced AI capabilities
+              Built for vibecoders
             </span>
           </motion.div>
 
@@ -144,38 +116,28 @@ export function LandingPage() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-xl text-aurora-muted max-w-2xl mx-auto mb-10 leading-relaxed"
           >
-            BuildBrief acts as your AI product manager, interviewing you to generate 
+            BuildBrief acts as your AI product manager, interviewing you to generate
             production-ready architecture specifications and Mega-Prompts for AI coding agents.
           </motion.p>
 
-          {/* CTA Form */}
-          <motion.form
+          {/* CTA */}
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            onSubmit={handleSubmit}
             className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-xl mx-auto mb-8"
           >
-            <div className="relative w-full">
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email to get started"
-                className="h-14 pl-5 pr-4 text-base w-full"
-                containerClassName="w-full"
-              />
-            </div>
-            <GlowingButton 
-              type="submit"
-              size="lg"
-              className="w-full sm:w-auto whitespace-nowrap"
-              icon={<ArrowRight size={20} />}
-              iconPosition="right"
-            >
-              Start Building
-            </GlowingButton>
-          </motion.form>
+            <Link to="/app">
+              <GlowingButton
+                size="lg"
+                className="whitespace-nowrap h-14 px-8"
+                icon={<ArrowRight size={20} />}
+                iconPosition="right"
+              >
+                Start Building
+              </GlowingButton>
+            </Link>
+          </motion.div>
 
           {/* Trust badges */}
           <motion.div
@@ -186,15 +148,15 @@ export function LandingPage() {
           >
             <span className="flex items-center gap-2">
               <CheckCircle2 size={16} className="text-aurora-success" />
-              Free to start
+              Free to use
             </span>
             <span className="flex items-center gap-2">
               <CheckCircle2 size={16} className="text-aurora-success" />
-              No credit card required
+              No sign-up required
             </span>
             <span className="flex items-center gap-2">
               <CheckCircle2 size={16} className="text-aurora-success" />
-              Cancel anytime
+              Works in browser
             </span>
           </motion.div>
 
@@ -207,17 +169,6 @@ export function LandingPage() {
           >
             <div className="relative rounded-2xl overflow-hidden border border-aurora-border/50 shadow-2xl">
               <div className="absolute inset-0 bg-gradient-to-t from-aurora-bg via-transparent to-transparent z-10" />
-              <img
-                src="/demo-preview.jpg"
-                alt="BuildBrief Interface Preview"
-                className="w-full h-auto opacity-80"
-                onError={(e) => {
-                  // Fallback if image doesn't exist
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                }}
-              />
-              {/* Placeholder if no image */}
               <div className="aspect-video bg-aurora-surface/50 flex items-center justify-center">
                 <div className="max-w-md text-center px-6">
                   <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-aurora-primary to-aurora-secondary mx-auto mb-4 flex items-center justify-center">
@@ -233,29 +184,6 @@ export function LandingPage() {
               </div>
             </div>
           </motion.div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-20 px-4 border-y border-aurora-border/20">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="text-center"
-              >
-                <div className="text-4xl lg:text-5xl font-display font-bold text-aurora-text mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-aurora-muted">{stat.label}</div>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -277,7 +205,7 @@ export function LandingPage() {
               <span className="aurora-gradient-text">specify</span>
             </h2>
             <p className="text-aurora-muted text-lg max-w-2xl mx-auto">
-              Powerful features designed to help you transform ideas into 
+              Powerful features designed to help you transform ideas into
               production-ready specifications.
             </p>
           </motion.div>
@@ -354,7 +282,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Use Cases Section */}
       <section className="py-32 px-4">
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -365,44 +293,33 @@ export function LandingPage() {
           >
             <span className="inline-block px-4 py-1.5 rounded-full bg-aurora-primary/10 
                             text-aurora-primary text-sm font-medium mb-4">
-              Testimonials
+              Example Ideas
             </span>
             <h2 className="text-3xl lg:text-5xl font-display font-bold mb-4">
-              Loved by{' '}
-              <span className="aurora-gradient-text">builders</span>
+              What people are{' '}
+              <span className="aurora-gradient-text">building</span>
             </h2>
+            <p className="text-aurora-muted text-lg max-w-2xl mx-auto">
+              Real ideas that BuildBrief transformed into actionable specs.
+            </p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial, i) => (
+            {useCases.map((useCase, i) => (
               <motion.div
-                key={testimonial.author}
+                key={useCase.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <GlassCard className="h-full flex flex-col">
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} size={16} className="fill-aurora-secondary text-aurora-secondary" />
-                    ))}
-                  </div>
-                  
-                  <blockquote className="text-aurora-text mb-6 flex-1">
-                    "{testimonial.quote}"
-                  </blockquote>
-
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-aurora-primary to-aurora-secondary 
-                                    flex items-center justify-center text-white text-sm font-medium">
-                      {testimonial.avatar}
-                    </div>
-                    <div>
-                      <div className="font-medium">{testimonial.author}</div>
-                      <div className="text-sm text-aurora-muted">{testimonial.role}</div>
-                    </div>
-                  </div>
+                <GlassCard className="h-full">
+                  <h3 className="text-lg font-semibold mb-2 text-aurora-text">
+                    "{useCase.title}"
+                  </h3>
+                  <p className="text-sm text-aurora-muted leading-relaxed">
+                    {useCase.description}
+                  </p>
                 </GlassCard>
               </motion.div>
             ))}
@@ -425,24 +342,16 @@ export function LandingPage() {
                 Ready to build something{' '}
                 <span className="aurora-gradient-text">amazing</span>?
               </h2>
-              
+
               <p className="text-aurora-muted text-lg max-w-xl mx-auto mb-8">
-                Join thousands of builders who use BuildBrief to transform their ideas 
-                into production-ready specifications.
+                Describe your idea and let our AI turn it into a production-ready specification.
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link to="/app">
-                  <GlowingButton size="lg" icon={<ArrowRight size={20} />} iconPosition="right">
-                    Get Started Free
-                  </GlowingButton>
-                </Link>
-                <Link to="/pricing">
-                  <GlowingButton variant="secondary" size="lg">
-                    View Pricing
-                  </GlowingButton>
-                </Link>
-              </div>
+              <Link to="/app">
+                <GlowingButton size="lg" icon={<ArrowRight size={20} />} iconPosition="right">
+                  Get Started Free
+                </GlowingButton>
+              </Link>
             </div>
           </motion.div>
         </div>

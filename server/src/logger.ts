@@ -4,7 +4,6 @@
  */
 
 import { createWriteStream } from 'fs';
-import { format } from 'util';
 
 /**
  * Log levels in order of severity
@@ -76,7 +75,7 @@ class Logger {
 
   constructor(config: Partial<LoggerConfig> = {}) {
     this.config = { ...defaultConfig, ...config };
-    
+
     if (this.config.enableFile && this.config.logFilePath) {
       this.fileStream = createWriteStream(this.config.logFilePath, { flags: 'a' });
     }
@@ -94,26 +93,26 @@ class Logger {
    */
   private formatEntry(entry: LogEntry): string {
     const { timestamp, level, message, context, error, requestId } = entry;
-    
+
     let output = `[${timestamp}] [${level.toUpperCase()}]`;
-    
+
     if (requestId) {
       output += ` [${requestId}]`;
     }
-    
+
     output += ` ${message}`;
-    
+
     if (context && Object.keys(context).length > 0) {
       output += ` | ${JSON.stringify(context)}`;
     }
-    
+
     if (error) {
       output += ` | Error: ${error.message}`;
       if (error.stack) {
         output += `\n${error.stack}`;
       }
     }
-    
+
     return output;
   }
 
@@ -135,12 +134,12 @@ class Logger {
 
     // Console output
     if (this.config.enableConsole) {
-      const consoleMethod = entry.level === 'error' || entry.level === 'fatal' 
-        ? console.error 
-        : entry.level === 'warn' 
-          ? console.warn 
+      const consoleMethod = entry.level === 'error' || entry.level === 'fatal'
+        ? console.error
+        : entry.level === 'warn'
+          ? console.warn
           : console.log;
-      
+
       consoleMethod(this.colorize(entry.level, formatted));
     }
 
@@ -154,8 +153,8 @@ class Logger {
    * Create log entry with common fields
    */
   private createEntry(
-    level: LogLevel, 
-    message: string, 
+    level: LogLevel,
+    message: string,
     context?: Record<string, unknown>,
     error?: Error,
     requestId?: string
@@ -171,7 +170,7 @@ class Logger {
   }
 
   // Public logging methods
-  
+
   debug(message: string, context?: Record<string, unknown>, requestId?: string): void {
     this.write(this.createEntry('debug', message, context, undefined, requestId));
   }
@@ -198,12 +197,12 @@ class Logger {
   child(defaultContext: Record<string, unknown>): Logger {
     const childLogger = new Logger(this.config);
     const parentWrite = this.write.bind(this);
-    
+
     childLogger['write'] = (entry: LogEntry) => {
       entry.context = { ...defaultContext, ...entry.context };
       parentWrite(entry);
     };
-    
+
     return childLogger;
   }
 }

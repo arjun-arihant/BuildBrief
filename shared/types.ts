@@ -1,0 +1,114 @@
+export interface ProjectState {
+    idea_summary: string | null;
+    target_user: string | null;
+    problem_statement: string | null;
+    app_type: string | null;
+    resolved_decisions: Record<string, any>;
+    unresolved_decisions: string[];
+    manual_prerequisites: string[];
+    assumptions: string[];
+    history: Array<{ question: string; answer: string }>;
+    queue?: AIResponse[];
+    is_complete: boolean;
+}
+
+export type UITemplate =
+    | 'free_text'
+    | 'single_choice'
+    | 'multi_choice'
+    | 'explanation_only'
+    | 'manual_action'
+    | 'summary'
+    | 'final_output'
+    | 'idea_analysis';
+
+export interface ChoiceOption {
+    value: string;
+    label: string;
+    explanation?: string;
+}
+
+export interface IdeaAnalysisContent {
+    idea_summary: string;
+    app_name_suggestion: string;
+    vision_statement: string;
+    implementation_approaches: Array<{
+        title: string;
+        description: string;
+        icon?: string;
+    }>;
+    caution: {
+        type: 'market' | 'technical' | 'scope' | 'competition';
+        message: string;
+    };
+    journey_preview: string[];
+    auto_decisions?: Array<{ decision: string; reason: string }>;
+}
+
+export interface UIContent {
+    question_text: string;
+    explanation?: string;
+    options?: ChoiceOption[];
+    action_title?: string;
+    action_description?: string;
+    summary_text?: string;
+
+    // Auto-Decisions notification
+    auto_decisions?: Array<{ decision: string; reason: string }>;
+
+    // For final_output
+    project_name?: string;
+    app_tagline?: string;
+    features_list?: string[];
+    tech_stack_recommendation?: string[];
+    mega_prompt?: string;
+    agents_md?: string;
+
+    // Enhanced Specification Fields
+    architecture_diagram?: string;
+    design_system?: {
+        colors: Record<string, string>;
+        typography: Record<string, string>;
+        spacing: string[];
+    };
+    ai_coder_rules?: string[];
+
+    // Collected Guides
+    manual_guides?: Array<{ title: string; steps: string[] }>;
+
+    // IdeaAnalysis fields
+    idea_summary?: string;
+    app_name_suggestion?: string;
+    vision_statement?: string;
+    implementation_approaches?: Array<{
+        title: string;
+        description: string;
+        icon?: string;
+    }>;
+    caution?: {
+        type: 'market' | 'technical' | 'scope' | 'competition';
+        message: string;
+    };
+    journey_preview?: string[];
+
+    // Starter prompt for vibecoders
+    starter_prompt?: string;
+}
+
+export interface AIResponse {
+    type: 'question' | 'final_output' | 'error' | 'idea_analysis';
+    template: UITemplate;
+    content: UIContent;
+    project_state_updates?: Partial<ProjectState>;
+    is_educational?: boolean;
+    progress?: {
+        current: number;
+        total: number;
+    };
+}
+
+export interface ClientState {
+    projectId: string;
+    projectState: ProjectState;
+    currentScreen: AIResponse;
+}

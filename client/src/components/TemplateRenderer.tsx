@@ -15,17 +15,19 @@ interface Props {
     onRefine?: (comments: string) => void;
     onReset?: () => void;
     loading: boolean;
+    allDecisions?: Array<{ decision: string; reason: string }>;
+    projectId?: string;
 }
 
-export const TemplateRenderer: React.FC<Props> = ({ step, onSubmit, onRefine, onReset }) => {
+export const TemplateRenderer: React.FC<Props> = ({ step, onSubmit, onRefine, onReset, loading, allDecisions, projectId }) => {
     const { template, content } = step;
-    const { auto_decisions } = content;
+    const autoDecisions = allDecisions || content.auto_decisions || [];
 
     // IdeaAnalysis template has its own layout (no GlassCard wrapper)
     if (template === 'idea_analysis') {
         return (
             <>
-                <AutoDecisionsSidebar decisions={auto_decisions || []} />
+                <AutoDecisionsSidebar decisions={autoDecisions} newDecisions={content.auto_decisions || []} />
                 <IdeaAnalysis
                     content={content}
                     onContinue={() => onSubmit('continue')}
@@ -37,7 +39,7 @@ export const TemplateRenderer: React.FC<Props> = ({ step, onSubmit, onRefine, on
     return (
         <>
             {/* Auto-Decisions Sidebar (right side) */}
-            <AutoDecisionsSidebar decisions={auto_decisions || []} />
+            <AutoDecisionsSidebar decisions={autoDecisions} newDecisions={content.auto_decisions || []} />
 
             <div className="w-full max-w-3xl mx-auto pb-20">
                 <GlassCard className="p-8 md:p-10 relative overflow-hidden">
@@ -47,17 +49,17 @@ export const TemplateRenderer: React.FC<Props> = ({ step, onSubmit, onRefine, on
                     {(() => {
                         switch (template) {
                             case 'free_text':
-                                return <FreeText content={content} onSubmit={onSubmit} />;
+                                return <FreeText content={content} onSubmit={onSubmit} loading={loading} />;
                             case 'single_choice':
                             case 'multi_choice':
-                                return <Choice content={content} type={template} onSubmit={onSubmit} />;
+                                return <Choice content={content} type={template} onSubmit={onSubmit} loading={loading} />;
                             case 'manual_action':
-                                return <ManualAction content={content} onSubmit={onSubmit} />;
+                                return <ManualAction content={content} onSubmit={onSubmit} loading={loading} />;
                             case 'explanation_only':
-                                return <Explanation content={content} onSubmit={onSubmit} />;
+                                return <Explanation content={content} onSubmit={onSubmit} loading={loading} />;
                             case 'summary':
                             case 'final_output':
-                                return <FinalOutput content={content} onRefine={onRefine} onReset={onReset} />;
+                                return <FinalOutput content={content} onRefine={onRefine} onReset={onReset} loading={loading} projectId={projectId} />;
                             default:
                                 return <div>Unknown template: {template}</div>;
                         }

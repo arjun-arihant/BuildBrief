@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuildBrief — From Vague Idea to Production-Ready Spec</title>
+    <meta name="description" content="BuildBrief transforms half-baked app ideas into comprehensive AI-ready specifications. Designed for vibecoders using Cursor, Windsurf, and Bolt.">
+    <meta name="keywords" content="AI, spec generator, vibecoding, Cursor, Windsurf, Bolt, app builder, mega-prompt">
+    <meta property="og:title" content="BuildBrief — AI-Powered Spec Generator">
+    <meta property="og:description" content="From vague idea to production-ready spec in minutes. Built for vibecoders.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x1F680;</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/clash-display" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark">
+    <!-- Grain overlay -->
+    <div class="grain-overlay"></div>
+
+    <!-- Nav -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <span class="logo-icon">&#x1F680;</span>
+                <span class="logo-text">BuildBrief</span>
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="https://github.com/arjun-arihant/BuildBrief" target="_blank" rel="noopener" class="nav-github">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-glow hero-glow-1"></div>
+        <div class="hero-glow hero-glow-2"></div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                Open Source AI Tool for Vibecoders
+            </div>
+            <h1 class="hero-title">
+                From <span class="gradient-text">Vague Idea</span> to<br>
+                Production-Ready Spec
+            </h1>
+            <p class="hero-subtitle">
+                BuildBrief is an AI architect that interviews you about your app idea, makes smart technical decisions automatically, and generates a comprehensive spec you can hand to any AI coding agent.
+            </p>
+            <div class="hero-actions">
+                <a href="https://github.com/arjun-arihant/BuildBrief" class="btn btn-primary" target="_blank" rel="noopener">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    View on GitHub
+                </a>
+                <a href="#how-it-works" class="btn btn-secondary">
+                    See How It Works &rarr;
+                </a>
+            </div>
+
+            <!-- Tech badges -->
+            <div class="tech-badges">
+                <span class="tech-badge">React</span>
+                <span class="tech-badge">TypeScript</span>
+                <span class="tech-badge">Express</span>
+                <span class="tech-badge">OpenRouter</span>
+                <span class="tech-badge">Tailwind</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <div class="section-inner">
+            <div class="section-header">
+                <h2 class="section-title">Built for <span class="gradient-text">Vibecoders</span></h2>
+                <p class="section-subtitle">Everything you need to go from "I have an idea" to "here's the complete spec".</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="--accent: #8B5CF6;">&#x1F9E0;</div>
+                    <h3>AI-Driven Interview</h3>
+                    <p>A dynamic 5&ndash;10 question flow that adapts to your project's complexity. Not a fixed questionnaire &mdash; the AI decides what matters.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--accent: #F59E0B;">&#x26A1;</div>
+                    <h3>Auto-Decisions</h3>
+                    <p>The AI silently makes non-critical technical decisions &mdash; database type, auth method, folder structure &mdash; so you can focus on what matters.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--accent: #06B6D4;">&#x1F3AF;</div>
+                    <h3>Target-Specific Exports</h3>
+                    <p>Export your spec formatted for Cursor (.cursorrules), Windsurf (.windsurfrules), or Bolt. One spec, every tool.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--accent: #10B981;">&#x1F4CB;</div>
+                    <h3>Task Breakdown</h3>
+                    <p>Post-spec AI-generated implementation checklist with phases, priorities, and time estimates. Check off tasks as you build.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--accent: #EF4444;">&#x1F4BE;</div>
+                    <h3>Session Persistence</h3>
+                    <p>Your interview progress survives tab closes and page refreshes. Come back anytime within 24 hours and pick up where you left off.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--accent: #F97316;">&#x1F504;</div>
+                    <h3>Error Recovery</h3>
+                    <p>Automatic retries, Go Back, and Start Over &mdash; at every step. No more losing progress to a network hiccup.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-inner">
+            <div class="section-header">
+                <h2 class="section-title">How It <span class="gradient-text">Works</span></h2>
+                <p class="section-subtitle">Seven steps from napkin sketch to production-ready spec.</p>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Describe Your Idea</h3>
+                        <p>"A Tinder for adopting rescue dogs" is enough. BuildBrief handles the rest.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>AI Analyzes It</h3>
+                        <p>Get a vision statement, suggested app name, implementation approaches, and honest cautions &mdash; instantly.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Answer Smart Questions</h3>
+                        <p>The AI asks only what matters architecturally. 5&ndash;10 questions max. It infers the obvious stuff.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Watch Auto-Decisions</h3>
+                        <p>The sidebar fills with smart technical defaults the AI chose for you. Override any of them if you disagree.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Get Your Mega-Prompt</h3>
+                        <p>A multi-page technical specification covering user stories, data models, API endpoints, and tech stack.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <h3>Break into Tasks</h3>
+                        <p>Optional: generate a phased implementation checklist with priorities and time estimates.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">7</div>
+                    <div class="step-content">
+                        <h3>Export &amp; Build</h3>
+                        <p>Download for Cursor, Windsurf, or Bolt. Paste and start building immediately.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="section-inner">
+            <div class="cta-card">
+                <div class="cta-glow"></div>
+                <h2>Ready to Build Something?</h2>
+                <p>Clone the repo, add your OpenRouter key, and start turning ideas into specs.</p>
+                <div class="cta-actions">
+                    <a href="https://github.com/arjun-arihant/BuildBrief" class="btn btn-primary btn-lg" target="_blank" rel="noopener">
+                        Get Started on GitHub &rarr;
+                    </a>
+                </div>
+                <div class="cta-code">
+                    <code>git clone https://github.com/arjun-arihant/BuildBrief.git</code>
+                    <button class="copy-btn" onclick="navigator.clipboard.writeText('git clone https://github.com/arjun-arihant/BuildBrief.git'); this.textContent='Done'; setTimeout(() => this.textContent='Copy', 1500)">Copy</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="section-inner">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <span class="logo-icon">&#x1F680;</span>
+                    <span class="logo-text">BuildBrief</span>
+                </div>
+                <p class="footer-text">Open source. MIT licensed. Built for vibecoders.</p>
+                <div class="footer-links">
+                    <a href="https://github.com/arjun-arihant/BuildBrief" target="_blank" rel="noopener">GitHub</a>
+                    <a href="https://github.com/arjun-arihant/BuildBrief/issues" target="_blank" rel="noopener">Issues</a>
+                    <a href="https://github.com/arjun-arihant/BuildBrief/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

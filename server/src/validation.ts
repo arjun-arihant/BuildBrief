@@ -25,7 +25,11 @@ export const initProjectSchema = z.object({
     .transform(val => val.trim())
     .refine(val => val.length > 0, {
       message: 'Idea cannot be empty after trimming'
-    })
+    }),
+  existingContext: z.string()
+    .max(10000, errorMessages.maxLength('Existing context', 10000))
+    .transform(val => val.trim())
+    .optional()
 });
 
 /**
@@ -58,6 +62,21 @@ export const refineSchema = z.object({
 export const projectIdParamSchema = z.object({
   id: z.string()
     .uuid(errorMessages.uuid('Project ID'))
+});
+
+/**
+ * Task breakdown request schema
+ */
+export const taskBreakdownSchema = z.object({
+  projectId: z.string()
+    .uuid(errorMessages.uuid('Project ID')),
+  megaPrompt: z.string()
+    .min(50, errorMessages.minLength('Mega-Prompt', 50))
+    .max(50000, errorMessages.maxLength('Mega-Prompt', 50000)),
+  projectName: z.string()
+    .min(1, errorMessages.required('Project name'))
+    .max(200, errorMessages.maxLength('Project name', 200))
+    .transform(val => val.trim())
 });
 
 /**

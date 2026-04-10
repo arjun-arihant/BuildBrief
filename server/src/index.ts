@@ -6,31 +6,31 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { z } from 'zod';
 
 import { stateManager } from './state';
-import { getNextStep } from './openrouter';
+import { getNextStep, getTaskBreakdown } from './openrouter';
 import { logger } from './logger';
-import { 
-  AppError, 
-  ValidationError, 
-  NotFoundError, 
-  errorHandler, 
+import {
+  AppError,
+  ValidationError,
+  NotFoundError,
+  errorHandler,
   notFoundHandler,
-  asyncHandler 
+  asyncHandler
 } from './errors';
 import { aiRateLimiter, standardRateLimiter } from './rateLimiter';
-import { 
-  requestIdMiddleware, 
-  requestLoggerMiddleware, 
+import {
+  requestIdMiddleware,
+  requestLoggerMiddleware,
   securityHeadersMiddleware,
-  RequestWithContext 
+  RequestWithContext
 } from './middleware';
-import { 
-  initProjectSchema, 
-  answerSchema, 
+import {
+  initProjectSchema,
+  answerSchema,
   refineSchema,
-  projectIdParamSchema 
+  projectIdParamSchema,
+  taskBreakdownSchema
 } from './validation';
 
 // Load environment variables
@@ -65,10 +65,10 @@ app.use(express.json({ limit: '1mb' }));
 /**
  * Health check endpoint
  */
-app.get('/health', standardRateLimiter, (req: Request, res: Response) => {
+app.get('/health', standardRateLimiter, (_req: Request, res: Response) => {
   const uptime = Date.now() - serverStartTime;
   const memory = process.memoryUsage();
-  
+
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
@@ -84,7 +84,7 @@ app.get('/health', standardRateLimiter, (req: Request, res: Response) => {
 /**
  * Root endpoint
  */
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.json({
     name: 'BuildBrief API',
     version: '1.0.0',
@@ -97,12 +97,12 @@ app.get('/', (req: Request, res: Response) => {
  * Initialize project endpoint
  * POST /api/init
  */
-app.post('/api/init', 
+app.post('/api/init',
   aiRateLimiter,
   asyncHandler(async (req: RequestWithContext, res: Response) => {
     // Validate input
     const validationResult = initProjectSchema.safeParse(req.body);
-    
+
     if (!validationResult.success) {
       throw new ValidationError(
         'Invalid project idea',
@@ -110,9 +110,9 @@ app.post('/api/init',
       );
     }
 
-    const { idea } = validationResult.data;
+    const { idea, existingContext } = validationResult.data;
 
-    logger.info('Creating new project', { ideaLength: idea.length }, req.requestId);
+    logger.info('Creating new project', { ideaLength: idea.length, hasExistingContext: !!existingContext }, req.requestId);
 
     // Create session
     const projectId = stateManager.createSession(idea);
@@ -124,7 +124,8 @@ app.post('/api/init',
 
     // Get first question from AI
     logger.info('Requesting initial question from AI', {}, req.requestId);
-    const firstStep = await getNextStep(currentState, `My idea is: ${idea}`);
+    const contextPrefix = existingContext ? `My idea is: ${idea}\n\nExisting project context:\n${existingContext}` : `My idea is: ${idea}`;
+    const firstStep = await getNextStep(currentState, contextPrefix, existingContext);
 
     if (firstStep.type === 'error') {
       throw new AppError(502, 'AI service returned an error', 'AI_ERROR');
@@ -155,12 +156,12 @@ app.post('/api/init',
  * Submit answer endpoint
  * POST /api/answer
  */
-app.post('/api/answer', 
+app.post('/api/answer',
   aiRateLimiter,
   asyncHandler(async (req: RequestWithContext, res: Response) => {
     // Validate input
     const validationResult = answerSchema.safeParse(req.body);
-    
+
     if (!validationResult.success) {
       throw new ValidationError(
         'Invalid answer submission',
@@ -176,14 +177,14 @@ app.post('/api/answer',
       throw new NotFoundError('Project', projectId);
     }
 
-    logger.info('Processing answer', { 
-      projectId, 
-      historyLength: currentState.history.length 
+    logger.info('Processing answer', {
+      projectId,
+      historyLength: currentState.history.length
     }, req.requestId);
 
     // Record answer in history
     const updatedHistory = [
-      ...currentState.history, 
+      ...currentState.history,
       { question: 'AI_QUESTION', answer }
     ];
     stateManager.updateSession(projectId, { history: updatedHistory });
@@ -205,7 +206,7 @@ app.post('/api/answer',
     const ideaLength = (stateWithHistory.idea_summary || '').length;
     const hasMultipleRoles = (stateWithHistory.resolved_decisions?.user_roles || '').includes(',');
     const hasIntegrations = (stateWithHistory.resolved_decisions?.integrations || []).length > 0;
-    
+
     let dynamicLimit = 5;
     if (ideaLength > 100) dynamicLimit += 1;
     if (hasMultipleRoles) dynamicLimit += 2;
@@ -218,9 +219,9 @@ app.post('/api/answer',
       total: dynamicLimit
     };
 
-    logger.info('Answer processed', { 
-      projectId, 
-      progress: nextStep.progress 
+    logger.info('Answer processed', {
+      projectId,
+      progress: nextStep.progress
     }, req.requestId);
 
     res.json({
@@ -235,12 +236,12 @@ app.post('/api/answer',
  * Refine project endpoint
  * POST /api/refine
  */
-app.post('/api/refine', 
+app.post('/api/refine',
   aiRateLimiter,
   asyncHandler(async (req: RequestWithContext, res: Response) => {
     // Validate input
     const validationResult = refineSchema.safeParse(req.body);
-    
+
     if (!validationResult.success) {
       throw new ValidationError(
         'Invalid refinement request',
@@ -290,12 +291,12 @@ app.post('/api/refine',
  * Get project endpoint
  * GET /api/project/:id
  */
-app.get('/api/project/:id', 
+app.get('/api/project/:id',
   standardRateLimiter,
   asyncHandler(async (req: RequestWithContext, res: Response) => {
     // Validate project ID
     const validationResult = projectIdParamSchema.safeParse({ id: req.params.id });
-    
+
     if (!validationResult.success) {
       throw new ValidationError(
         'Invalid project ID',
@@ -305,7 +306,7 @@ app.get('/api/project/:id',
 
     const { id } = validationResult.data;
     const state = stateManager.getSession(id);
-    
+
     if (!state) {
       throw new NotFoundError('Project', id);
     }
@@ -313,6 +314,44 @@ app.get('/api/project/:id',
     res.json({
       success: true,
       data: state,
+      requestId: req.requestId
+    });
+  })
+);
+
+/**
+ * Task breakdown endpoint
+ * POST /api/tasks
+ */
+app.post('/api/tasks',
+  aiRateLimiter,
+  asyncHandler(async (req: RequestWithContext, res: Response) => {
+    const validationResult = taskBreakdownSchema.safeParse(req.body);
+
+    if (!validationResult.success) {
+      throw new ValidationError(
+        'Invalid task breakdown request',
+        { issues: validationResult.error.issues }
+      );
+    }
+
+    const { projectId, megaPrompt, projectName } = validationResult.data;
+
+    // Verify session exists
+    const currentState = stateManager.getSession(projectId);
+    if (!currentState) {
+      throw new NotFoundError('Project', projectId);
+    }
+
+    logger.info('Generating task breakdown', { projectId, projectName }, req.requestId);
+
+    const taskBreakdown = await getTaskBreakdown(megaPrompt, projectName);
+
+    logger.info('Task breakdown generated', { projectId }, req.requestId);
+
+    res.json({
+      success: true,
+      data: { tasks: taskBreakdown },
       requestId: req.requestId
     });
   })
@@ -328,7 +367,7 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   logger.info(`BuildBrief API Server running on http://localhost:${PORT}`);
   logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  
+
   if (!process.env.OPENROUTER_API_KEY) {
     logger.warn('OPENROUTER_API_KEY is not set - AI calls will fail');
   }

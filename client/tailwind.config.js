@@ -25,16 +25,6 @@ export default {
                     border: "var(--color-border)",
                     glow: "var(--color-primary-glow)",
                 },
-                // Keep cosmos for backward compat during transition
-                cosmos: {
-                    bg: "#0B1120",
-                    card: "rgba(15, 23, 42, 0.6)",
-                    border: "rgba(56, 189, 248, 0.2)",
-                    primary: "#7C3AED",
-                    secondary: "#38BDF8",
-                    text: "#F8FAFC",
-                    muted: "#94A3B8",
-                }
             },
             fontFamily: {
                 sans: ['Inter', 'system-ui', 'sans-serif'],

@@ -64,10 +64,10 @@ export const AgentTimeline: React.FC<Props> = ({ agentMd }) => {
         return (
             <GlassCard className="p-6">
                 <div className="flex items-center gap-2 mb-4">
-                    <Users className="text-cosmos-primary" size={20} />
+                    <Users className="text-aurora-primary" size={20} />
                     <h3 className="text-lg font-semibold">Build Team Plan</h3>
                 </div>
-                <pre className="whitespace-pre-wrap font-mono text-sm text-cosmos-muted max-h-[400px] overflow-y-auto">
+                <pre className="whitespace-pre-wrap font-mono text-sm text-aurora-muted max-h-[400px] overflow-y-auto">
                     {agentMd}
                 </pre>
             </GlassCard>
@@ -76,7 +76,7 @@ export const AgentTimeline: React.FC<Props> = ({ agentMd }) => {
 
     if (!plan || !plan.phases) {
         return (
-            <div className="text-center text-cosmos-muted py-10">
+            <div className="text-center text-aurora-muted py-10">
                 No agent plan available.
             </div>
         );
@@ -87,25 +87,25 @@ export const AgentTimeline: React.FC<Props> = ({ agentMd }) => {
             {/* Header Stats */}
             <div className="grid grid-cols-3 gap-4">
                 <GlassCard className="text-center py-4">
-                    <div className="text-3xl font-bold text-cosmos-primary">{plan.total_phases}</div>
-                    <div className="text-sm text-cosmos-muted">Phases</div>
+                    <div className="text-3xl font-bold text-aurora-primary">{plan.total_phases}</div>
+                    <div className="text-sm text-aurora-muted">Phases</div>
                 </GlassCard>
                 <GlassCard className="text-center py-4">
-                    <div className="text-3xl font-bold text-cosmos-secondary">{plan.estimated_days}</div>
-                    <div className="text-sm text-cosmos-muted">Est. Days</div>
+                    <div className="text-3xl font-bold text-aurora-secondary">{plan.estimated_days}</div>
+                    <div className="text-sm text-aurora-muted">Est. Days</div>
                 </GlassCard>
                 <GlassCard className="text-center py-4">
                     <div className="text-3xl font-bold text-green-400">
                         {plan.phases.reduce((acc, p) => acc + p.agents.length, 0)}
                     </div>
-                    <div className="text-sm text-cosmos-muted">Agents</div>
+                    <div className="text-sm text-aurora-muted">Agents</div>
                 </GlassCard>
             </div>
 
             {/* Timeline */}
             <div className="relative">
                 {/* Vertical Line */}
-                <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-cosmos-primary via-cosmos-secondary to-green-400" />
+                <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-aurora-primary via-aurora-secondary to-green-400" />
 
                 {plan.phases.map((phase, phaseIdx) => (
                     <motion.div
@@ -117,10 +117,10 @@ export const AgentTimeline: React.FC<Props> = ({ agentMd }) => {
                     >
                         {/* Phase Marker */}
                         <div className={cn(
-                            "absolute left-3 w-7 h-7 rounded-full flex items-center justify-center text-white text-sm font-bold",
-                            phaseIdx === 0 ? "bg-cosmos-primary" :
+                            "absolute left-3 w-7 h-7 rounded-full flex items-center justify-center text-aurora-text text-sm font-bold",
+                            phaseIdx === 0 ? "bg-aurora-primary" :
                                 phaseIdx === plan!.phases.length - 1 ? "bg-green-500" :
-                                    "bg-cosmos-secondary"
+                                    "bg-aurora-secondary"
                         )}>
                             {phase.id}
                         </div>
@@ -129,8 +129,8 @@ export const AgentTimeline: React.FC<Props> = ({ agentMd }) => {
                         <GlassCard className="relative overflow-hidden">
                             {/* Phase Header */}
                             <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-lg font-bold text-white">{phase.name}</h3>
-                                <div className="flex items-center gap-1 text-cosmos-muted text-sm">
+                                <h3 className="text-lg font-bold text-aurora-text">{phase.name}</h3>
+                                <div className="flex items-center gap-1 text-aurora-muted text-sm">
                                     <Clock size={14} />
                                     {phase.duration}
                                 </div>
@@ -155,25 +155,25 @@ export const AgentTimeline: React.FC<Props> = ({ agentMd }) => {
                                                 "w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-br",
                                                 colorClass
                                             )}>
-                                                <Icon size={20} className="text-white" />
+                                                <Icon size={20} className="text-aurora-text" />
                                             </div>
 
                                             {/* Agent Info */}
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2 mb-1">
-                                                    <span className="font-semibold text-white">
+                                                    <span className="font-semibold text-aurora-text">
                                                         {agent.name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                                                     </span>
                                                     <span className={cn(
                                                         "text-xs px-2 py-0.5 rounded-full",
-                                                        agent.role === 'Lead' ? "bg-cosmos-primary/20 text-cosmos-primary" :
-                                                            agent.role === 'Parallel' ? "bg-cosmos-secondary/20 text-cosmos-secondary" :
-                                                                "bg-white/10 text-cosmos-muted"
+                                                        agent.role === 'Lead' ? "bg-aurora-primary/20 text-aurora-primary" :
+                                                            agent.role === 'Parallel' ? "bg-aurora-secondary/20 text-aurora-secondary" :
+                                                                "bg-white/10 text-aurora-muted"
                                                     )}>
                                                         {agent.role}
                                                     </span>
                                                 </div>
-                                                <ul className="text-sm text-cosmos-muted space-y-0.5">
+                                                <ul className="text-sm text-aurora-muted space-y-0.5">
                                                     {agent.tasks.map((task, taskIdx) => (
                                                         <li key={taskIdx} className="flex items-start gap-2">
                                                             <CheckCircle2 size={12} className="mt-1 text-green-400 flex-shrink-0" />
@@ -193,12 +193,12 @@ export const AgentTimeline: React.FC<Props> = ({ agentMd }) => {
 
             {/* Instructions */}
             {plan.instructions && (
-                <GlassCard className="bg-cosmos-primary/10 border-cosmos-primary/30">
+                <GlassCard className="bg-aurora-primary/10 border-aurora-primary/30">
                     <div className="flex items-start gap-3">
-                        <Rocket className="text-cosmos-primary flex-shrink-0 mt-1" size={20} />
+                        <Rocket className="text-aurora-primary flex-shrink-0 mt-1" size={20} />
                         <div>
-                            <h4 className="font-semibold text-white mb-1">How to Use This Plan</h4>
-                            <p className="text-sm text-cosmos-muted">{plan.instructions}</p>
+                            <h4 className="font-semibold text-aurora-text mb-1">How to Use This Plan</h4>
+                            <p className="text-sm text-aurora-muted">{plan.instructions}</p>
                         </div>
                     </div>
                 </GlassCard>

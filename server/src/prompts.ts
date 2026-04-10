@@ -127,6 +127,11 @@ Ask questions in this priority order:
    - Performance requirements?
    - Budget constraints?
 
+6. VIBE (Design Direction)
+   - What's the vibe? (modern & minimal, bold & colorful, corporate, playful)
+   - Any apps they love the look of?
+   - Light mode, dark mode, or both?
+
 ═══════════════════════════════════════════════════════════════
 UI TEMPLATES (USE ONLY THESE)
 ═══════════════════════════════════════════════════════════════
@@ -264,6 +269,12 @@ Post: id, title, content, userId, createdAt
 - Who can do what (permissions)
 - Important business logic
 
+## Design Direction (max 4 bullets)
+- Vibe: [e.g., modern & minimal, dark theme]
+- Inspiration: [app names if mentioned, or describe the feel]
+- Color mood: [e.g., cool blues, warm earth tones, vibrant gradients]
+- Layout feel: [e.g., card-based, dashboard-style, spacious]
+
 ---
 
 The AI agent receiving this prompt will figure out the rest.
@@ -274,6 +285,7 @@ The content field for final_output MUST include:
 - features_list: string[] (5-8 items)
 - tech_stack_recommendation: string[]
 - mega_prompt: string (UNDER 15,000 CHARACTERS — ENFORCED!)
+- starter_prompt: string (100-200 words — the VERY FIRST message the vibecoder should paste into their AI coding tool to kick off the project. Include context about what to build, what tech to use, and that this is a new project.)
 - manual_guides: [] (empty unless external APIs needed)
 
 
@@ -315,7 +327,7 @@ ABSOLUTE RULES
 Begin after receiving the user's idea.
 `;
 
-export const getSystemPrompt = (stateJson: string, lastAnswer: string) => {
+export const getSystemPrompt = (stateJson: string, lastAnswer: string, existingContext?: string) => {
   const parsed = JSON.parse(stateJson || "{}");
   const questionNumber = (parsed.history?.length ?? 0) + 1;
   const resolvedCount = Object.keys(parsed.resolved_decisions || {}).length;
@@ -340,6 +352,22 @@ export const getSystemPrompt = (stateJson: string, lastAnswer: string) => {
   // Detect first turn
   const isFirstTurn = questionNumber === 1;
 
+  const existingContextBlock = existingContext ? `
+═══════════════════════════════════════════════════════════════
+🏗️ EXISTING PROJECT CONTEXT — USER HAS AN EXISTING PROJECT
+═══════════════════════════════════════════════════════════════
+
+The user has an existing project with the following context:
+"""
+${existingContext}
+"""
+
+IMPORTANT: Focus on EXTENSIONS and ADDITIONS to this existing project.
+- Do NOT ask about foundational setup they already have
+- DO ask about what they want to ADD or CHANGE
+- Treat this as a continuation, not a fresh start
+` : '';
+
   return `${SYSTEM_PROMPT}
 
 ═══════════════════════════════════════════════════════════════
@@ -351,7 +379,7 @@ ${stateJson}
 
 Last User Answer:
 "${lastAnswer}"
-
+${existingContextBlock}
 ═══════════════════════════════════════════════════════════════
 🎯 DYNAMIC PROGRESS TRACKING — READ THIS CAREFULLY
 ═══════════════════════════════════════════════════════════════
@@ -365,6 +393,14 @@ Last User Answer:
 ${isFirstTurn ? `
 🌟🌟🌟 FIRST TURN — MANDATORY IDEA ANALYSIS 🌟🌟🌟
 This is the FIRST response to the user's idea. You MUST:
+${existingContext ? `
+Since the user has an EXISTING project, use template = "idea_analysis" but focus on:
+- app_name_suggestion: Their existing project name or a suggested improvement
+- vision_statement: What this project could become WITH the new additions
+- implementation_approaches: 2-3 ways to extend/improve the existing project
+- caution: A specific concern about the proposed changes (scope creep, tech debt, etc.)
+- journey_preview: Steps specific to extending their existing project
+` : `
 1. Use template = "idea_analysis" (NOT single_choice, NOT multi_choice)
 2. Include these fields in content:
    - app_name_suggestion: A catchy name for their app
@@ -373,6 +409,7 @@ This is the FIRST response to the user's idea. You MUST:
    - caution: {type: "market"|"technical"|"scope"|"competition", message: string}
    - journey_preview: ["Define your target users", "Choose core features", "Finalize your spec"]
 3. Do NOT ask a question yet — just analyze and validate their idea
+`}
 
 CRITICAL: If you don't use template="idea_analysis" on this first turn, you are FAILING your task.
 ` : ''}
@@ -405,3 +442,49 @@ ${isFirstTurn ? '5. FIRST TURN: You MUST use template="idea_analysis" — this i
 Return valid JSON ONLY.
 `;
 };
+
+/**
+ * Task breakdown prompt — takes a completed mega-prompt and generates
+ * an ordered implementation checklist for vibecoders.
+ */
+export const getTaskBreakdownPrompt = (megaPrompt: string, projectName: string) => {
+  return `You are a senior technical project manager. Given the following software specification (Mega-Prompt), break it down into a clear, ordered implementation task list that a vibecoder can follow when working with an AI coding agent.
+
+RULES:
+1. Return ONLY valid JSON — no markdown, no code blocks
+2. Tasks should be in dependency order (what to build first)
+3. Each task should be a single, focused unit of work
+4. Use simple, non-technical language where possible
+5. Group tasks into phases (Setup, Core, Features, Polish)
+6. Include time estimates for each task (in hours, assuming AI-assisted development)
+7. Maximum 15-20 tasks total
+
+OUTPUT FORMAT:
+{
+  "project_name": "${projectName}",
+  "total_estimated_hours": number,
+  "phases": [
+    {
+      "name": "Phase name",
+      "tasks": [
+        {
+          "id": 1,
+          "title": "Short task title",
+          "description": "What to tell the AI coder to do",
+          "priority": "critical" | "high" | "medium" | "low",
+          "estimated_hours": number,
+          "dependencies": [] // IDs of tasks that must be done first
+        }
+      ]
+    }
+  ]
+}
+
+MEGA-PROMPT:
+"""
+${megaPrompt}
+"""
+
+Return valid JSON ONLY.`;
+};
+

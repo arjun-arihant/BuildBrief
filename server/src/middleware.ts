@@ -30,12 +30,12 @@ export function requestIdMiddleware(
   next: NextFunction
 ): void {
   const requestId = (req.headers['x-request-id'] as string) || generateRequestId();
-  
+
   (req as RequestWithContext).requestId = requestId;
   (req as RequestWithContext).startTime = Date.now();
-  
+
   res.setHeader('X-Request-Id', requestId);
-  
+
   next();
 }
 
@@ -49,36 +49,48 @@ export function requestLoggerMiddleware(
 ): void {
   const context = req as RequestWithContext;
   const { method, path, query, body } = req;
-  
+
   // Log request start
   logger.info(
     `→ ${method} ${path}`,
     {
       query: Object.keys(query).length > 0 ? query : undefined,
-      body: body && Object.keys(body).length > 0 && !path.includes('init') 
+      body: body && Object.keys(body).length > 0 && !path.includes('init')
         ? '[REDACTED]' // Don't log request bodies that may contain sensitive data
         : undefined
     },
     context.requestId
   );
-  
+
   // Log response finish
   res.on('finish', () => {
     const duration = Date.now() - context.startTime;
     const { statusCode } = res;
-    
+
     const level = statusCode >= 500 ? 'error' : statusCode >= 400 ? 'warn' : 'info';
-    
-    logger[level](
-      `← ${method} ${path} ${statusCode} (${duration}ms)`,
-      {
-        statusCode,
-        duration
-      },
-      context.requestId
-    );
+
+    if (level === 'error') {
+      logger.error(
+        `← ${method} ${path} ${statusCode} (${duration}ms)`,
+        undefined,
+        { statusCode, duration },
+        context.requestId
+      );
+    } else if (level === 'warn') {
+      logger.warn(
+        `← ${method} ${path} ${statusCode} (${duration}ms)`,
+        { statusCode, duration },
+        context.requestId
+      );
+    } else {
+      logger.info(
+        `← ${method} ${path} ${statusCode} (${duration}ms)`,
+        { statusCode, duration },
+        context.requestId
+      );
+    }
   });
-  
+
   next();
 }
 
@@ -86,25 +98,25 @@ export function requestLoggerMiddleware(
  * Security headers middleware
  */
 export function securityHeadersMiddleware(
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ): void {
   // Prevent MIME type sniffing
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  
+
   // Prevent clickjacking
   res.setHeader('X-Frame-Options', 'DENY');
-  
+
   // XSS protection
   res.setHeader('X-XSS-Protection', '1; mode=block');
-  
+
   // Referrer policy
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
+
   // Remove X-Powered-By
   res.removeHeader('X-Powered-By');
-  
+
   next();
 }
 
@@ -113,7 +125,7 @@ export function securityHeadersMiddleware(
  */
 export function corsValidationMiddleware(
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): void {
   const origin = req.headers.origin;
@@ -121,7 +133,7 @@ export function corsValidationMiddleware(
     'http://localhost:5173',
     'http://localhost:3000'
   ];
-  
+
   if (origin && !allowedOrigins.includes(origin)) {
     const context = req as RequestWithContext;
     logger.warn('CORS blocked request from unauthorized origin', {
@@ -129,6 +141,6 @@ export function corsValidationMiddleware(
       allowedOrigins
     }, context.requestId);
   }
-  
+
   next();
 }

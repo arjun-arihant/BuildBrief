@@ -97,7 +97,7 @@ export function errorHandler(
   _next: any
 ): void {
   const requestId = req.requestId || 'unknown';
-  
+
   // Determine error properties
   let statusCode = 500;
   let errorCode = 'INTERNAL_ERROR';
@@ -122,19 +122,33 @@ export function errorHandler(
 
   // Log error
   const logLevel = statusCode >= 500 ? 'error' : 'warn';
-  logger[logLevel](
-    `Error ${statusCode}: ${message}`,
-    err instanceof AppError ? undefined : err,
-    {
-      statusCode,
-      errorCode,
-      path: req.path,
-      method: req.method,
-      requestId,
-      ...(err instanceof AppError ? {} : { stack: err.stack })
-    },
-    requestId
-  );
+  if (logLevel === 'error') {
+    logger.error(
+      `Error ${statusCode}: ${message}`,
+      err instanceof AppError ? undefined : err,
+      {
+        statusCode,
+        errorCode,
+        path: req.path,
+        method: req.method,
+        requestId,
+        ...(err instanceof AppError ? {} : { stack: err.stack })
+      },
+      requestId
+    );
+  } else {
+    logger.warn(
+      `Error ${statusCode}: ${message}`,
+      {
+        statusCode,
+        errorCode,
+        path: req.path,
+        method: req.method,
+        requestId
+      },
+      requestId
+    );
+  }
 
   // Build response
   const response: ErrorResponse = {
@@ -161,7 +175,7 @@ export function errorHandler(
  */
 export function notFoundHandler(req: any, res: Response): void {
   const requestId = req.requestId || 'unknown';
-  
+
   logger.warn(`Route not found: ${req.method} ${req.path}`, {
     method: req.method,
     path: req.path
@@ -181,8 +195,8 @@ export function notFoundHandler(req: any, res: Response): void {
 /**
  * Async handler wrapper to catch errors
  */
-export function asyncHandler(fn: Function) {
-  return (req: any, res: Response, next: Function) => {
+export function asyncHandler(fn: (req: any, res: Response, next: (err?: any) => void) => Promise<void>) {
+  return (req: any, res: Response, next: (err?: any) => void) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 }

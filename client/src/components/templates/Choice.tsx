@@ -11,14 +11,16 @@ interface Props {
     content: UIContent;
     type: 'single_choice' | 'multi_choice';
     onSubmit: (answer: string) => void;
+    loading?: boolean;
 }
 
-export const Choice: React.FC<Props> = ({ content, type, onSubmit }) => {
+export const Choice: React.FC<Props> = ({ content, type, onSubmit, loading }) => {
     const [selected, setSelected] = useState<string[]>([]);
     const [customAnswer, setCustomAnswer] = useState('');
     const [showCustomInput, setShowCustomInput] = useState(false);
 
     const toggleOption = (value: string) => {
+        if (loading) return;
         // Clear custom answer when selecting an option
         setCustomAnswer('');
         setShowCustomInput(false);
@@ -151,7 +153,7 @@ export const Choice: React.FC<Props> = ({ content, type, onSubmit }) => {
             <div className="flex justify-end pt-2">
                 <GlowingButton
                     onClick={handleSubmit}
-                    disabled={!canSubmit}
+                    disabled={loading || !canSubmit}
                     icon={<ArrowRight size={18} />}
                     iconPosition="right"
                 >
